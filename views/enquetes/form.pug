@@ -24,7 +24,7 @@ block content
       i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答形式を選択します。「ラジオボタン」の場合は選択肢から1つだけ選んで回答します。「チェックボックス」の場合は複数選択が可能です。")
       select.form-control(name="answer_type", id="answer_type", value=question.answer_type, required)
         option(value="radio") ラジオボタン
-        option(value="check") チェックボックス
+        option(value="checkbox") チェックボックス
       .invalid-feedback どれか1つを選択してください。
     .form-group
       label(for="hashtags") ハッシュタグ（半角スペース区切り）
