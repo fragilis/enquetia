@@ -1,0 +1,51 @@
+extends ../base.pug
+
+block content
+  h3 #{action}
+  form(method="POST", novalidate)
+    .form-group
+      label(for="content") 質問
+      span.badge.badge-pill.badge-danger 必須
+      input.form-control(type="text", name="title", id="title", value=question.title, required, maxlength="400")
+    .form-group
+      label(for="description") 詳細
+      textarea.form-control(name="description", id="description", value=question.description, rows="3", maxlength="1000")
+      .invalid-feedback 1000文字以内で入力してください。
+    .form-group.clearfix#items
+      label(for="answer") 回答
+      span.badge.badge-pill.badge-danger 必須
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="選択肢を入力します。「選択肢を追加」ボタンを押すと最大8個まで選択肢を増やすことができます。不要な選択肢は入力欄右側の×ボタンで削除できます。")
+      button.btn.btn-primary.mt-n2.float-right#add_item(type="button") 選択肢を追加
+      .invalid-feedback 選択肢は10個までです。
+    .form-group
+      label(for="answer_type") 回答形式
+      span.badge.badge-pill.badge-danger 必須
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答形式を選択します。「ラジオボタン」の場合は選択肢から1つだけ選んで回答します。「チェックボックス」の場合は複数選択が可能です。")
+      select.form-control(name="answer_type", id="answer_type", value=question.answer_type, required)
+        option(value="radio") ラジオボタン
+        option(value="check") チェックボックス
+      .invalid-feedback どれか1つを選択してください。
+    .form-group
+      label(for="hashtags") ハッシュタグ（半角スペース区切り）
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="アンケートにハッシュタグを追加します。ハッシュタグはアンケートの検索に使用されます。")
+      input.form-control(type="text", name="hashtags", id="hashtags", value=question.hashtags, maxlength="200")
+      .invalid-feedback 200文字以内で入力してください。
+    .form-group
+      label(for="period_hours") 回答期間
+      span.badge.badge-pill.badge-danger 必須
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答を受け付ける期間を指定します。")
+      select.form-control(name="period_hours", id="period_hours", value=question.period_hours, required)
+        option(value="6") 6時間
+        option(value="12") 12時間
+        option(value="24") 1日間
+        option(value="48") 2日間
+        option(value="72") 3日間
+        option(value="168") 7日間
+        option(value="-1") 無期限
+      .invalid-feedback どれか1つを選択してください。
+    .form-group
+      label(for="answer_type") トップページに公開
+      span.badge.badge-pill.badge-danger 必須
+
+block script
+  script(type='text/javascript', src='/js/confirm.js', id='question', data-json=JSON.stringify(question))
