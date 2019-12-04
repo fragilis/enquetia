@@ -88,7 +88,7 @@ function update(id, data, cb, table) {
 
   const entity = {
     key: key,
-    data: commons.toDatastore(data, ['description']),
+    data: toDatastore(data, ['description']),
   };
 
   ds.save(entity, err => {
@@ -112,7 +112,7 @@ function read(ids, cb, table) {
         cb(err);
         return;
       }
-      cb(null, entities.map(commons.fromDatastore));
+      cb(null, entities.map(fromDatastore));
     });
   }
   else cb(null, []);
