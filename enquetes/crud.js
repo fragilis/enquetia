@@ -19,6 +19,7 @@ const oauth2 = require('../lib/oauth2');
 const models = require('../models/model-datastore');
 const { validationResult } = require('express-validator');
 const validation = require('../validation');
+const config = require('../config');
 
 const router = express.Router();
 
@@ -109,8 +110,9 @@ router.get('/mine', oauth2.required, (req, res, next) => {
  */
 router.get('/add', (req, res) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
-  console.log('passedVariable:',passedVariable)
   req.session.question = null;
+  passedVariable.MAX_ITEM_COUNT = config.get('MAX_ITEM_COUNT');
+  console.log('passedVariable:',passedVariable)
   res.render('enquetes/form.pug', {
     question: passedVariable,
     action: 'アンケートの作成',
@@ -124,7 +126,6 @@ router.get('/add', (req, res) => {
  */
 // [START add]
 
-// TODO: validationを別ファイルに追い出す
 router.post('/add', validation.checkQuestion,
   (req, res, next) => {
     const errors = validationResult(req);

@@ -6,7 +6,7 @@ block content
     | 「作成する」を押してしまうと、このアンケートを編集・削除できなくなってしまいます。<br />
     a.alert-link(href="#") 今すぐログインする
   p 以下のようなアンケートを作成します。<br />よろしいですか？
-  form(method="POST", novalidate)
+  form(method="POST", action="add", novalidate)
     input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
     input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
     input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)

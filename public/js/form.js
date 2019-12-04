@@ -1,12 +1,12 @@
-const MAX_ITEM_NUM = 8;
-
 $(function () {
   $('.needs-validation').on('submit', function(event){
+    /*
     if(this.checkValidity() === false){
       event.preventDefault();
       event.stopPropagation();
       $(this).addClass('was-validated');
     }
+    */
   });
 
   $('[data-toggle="tooltip"]').popover();
@@ -40,7 +40,8 @@ function delete_item(num){
 }
 
 function add_item(num, answer){
-  if(num > MAX_ITEM_NUM){
+  const $question = $('#question').data('json');
+  if(num > $question.MAX_ITEM_COUNT){
     // TODO: show error message
   }
   else{
