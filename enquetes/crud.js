@@ -17,7 +17,8 @@ const express = require('express');
 const images = require('../lib/images');
 const oauth2 = require('../lib/oauth2');
 const models = require('../models/model-datastore');
-const { check, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
+const validation = require('../validation');
 
 const router = express.Router();
 
@@ -124,17 +125,7 @@ router.get('/add', (req, res) => {
 // [START add]
 
 // TODO: validationを別ファイルに追い出す
-router.post('/add',
-  [
-    check('title').exists().isString().isLength({ max: 400 }),
-    check('detail').isLength({ max: 1000 }),
-    check('answers').exists().isLength({ min: 1, max: 10 }),
-    check('answers.*').exists().isString().isLength({ max: 100 }),
-    check('answer_type').exists().isIn(['radio', 'checkbox']),
-    check('hashtags').isLength({ max: 200 }),
-    check('period_hours').exists().isIn(['-1', '6', '12', '24', '48', '72', '168']),
-    check('publish_status').exists().isIn(['1', '2'])
-  ],
+router.post('/add', validation.checkQuestion,
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
