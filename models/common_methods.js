@@ -78,7 +78,7 @@ function toDatastore(obj, nonIndexed) {
   return results;
 }
 
-function update(id, data, cb, table) {
+function update(id, data, table, cb) {
   let key;
   if (id) {
     key = ds.key([table, parseInt(id, 10)]);
@@ -97,7 +97,7 @@ function update(id, data, cb, table) {
   });
 }
 
-function read(ids, cb, table) {
+function read(ids, table, cb) {
   const ids_array = ids instanceof Array ? ids : [ids];
   const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
   if(keys.length > 0){
@@ -118,7 +118,7 @@ function read(ids, cb, table) {
   else cb(null, []);
 }
 
-function _delete(id, cb, table) {
+function _delete(id, table, cb) {
   const key = ds.key([table, parseInt(id, 10)]);
   ds.delete(key, cb);
 }

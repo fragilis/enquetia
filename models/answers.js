@@ -19,52 +19,6 @@ const table = 'Answers';
 const commons = require('./common_methods');
 const excludeFromIndexes = ['content', 'count'];
 
-// Lists all table in the Datastore sorted alphabetically by title.
-// The ``limit`` argument determines the maximum amount of results to
-// return per page. The ``token`` argument allows requesting additional
-// pages. The callback is invoked with ``(err, table, nextPageToken)``.
-function latest(token, cb) {
-
-  console.log("table:",table);
-  console.log("token:",token);
-
-  const now = new Date();
-  const q = ds
-    .createQuery([table])
-    .filter('created_at', '>', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
-    .start(token);
-
-  ds.runQuery(q, (err, entities, nextQuery) => {
-    if (err) {
-      cb(err);
-      return;
-    }
-    cb(null, entities.map(commons.fromDatastore));
-  });
-}
-
-// Similar to ``list``, but only lists the table created by the specified
-// user.
-function listBy(userId, limit, token, cb) {
-  const q = ds
-    .createQuery([table])
-    .filter('user_id', '=', userId)
-    .limit(limit)
-    .start(token);
-
-  ds.runQuery(q, (err, entities, nextQuery) => {
-    if (err) {
-      cb(err);
-      return;
-    }
-    const hasMore =
-      nextQuery.moreResults !== Datastore.NO_MORE_RESULTS
-        ? nextQuery.endCursor
-        : false;
-    cb(null, entities.map(commons.fromDatastore), hasMore);
-  });
-}
-
 function create(answers, question_id, cb){
   const answers_array = answers instanceof Array ? answers : [answers];
   const entities = answers_array.map(answer => {
@@ -72,7 +26,7 @@ function create(answers, question_id, cb){
     const key = ds.key(table);
     const entity = {
       key: key,
-      data: commons.toDatastore(answer, ['description']),
+      data: commons.toDatastore(answer, excludeFromIndexes),
     };
     return entity;
   });
@@ -82,25 +36,6 @@ function create(answers, question_id, cb){
   });
 }
 
-function update(id, data, cb) {
-  commons.update(id, data, cb, table);
-}
-
-function read(ids, cb) {
-  commons.read(id, data, cb, table);
-}
-
-function _delete(id, cb) {
-  commons._delete(id, data, cb, table);
-}
-
 module.exports = {
   create: create,
-  /*
-  read: read,
-  update: update,
-  delete: _delete,
-  list: list,
-  listBy: listBy,
-  */
 };

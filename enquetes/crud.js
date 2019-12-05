@@ -226,6 +226,7 @@ router.post(
 
 router.get('/confirm', (req, res, next) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
+  req.session.question = null;
   if(passedVariable === undefined){
     next(err);
     return;

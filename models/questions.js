@@ -52,6 +52,7 @@ function list(limit, token, cb) {
 
 // Similar to ``list``, but only lists the table created by the specified
 // user.
+/*
 function find_by_id(id, token, cb) {
   const q = ds
     .createQuery([table])
@@ -66,34 +67,13 @@ function find_by_id(id, token, cb) {
     cb(null, entities.map(commons.fromDatastore));
   });
 }
-
-// Similar to ``list``, but only lists the table created by the specified
-// user.
-function listBy(userId, limit, token, cb) {
-  const q = ds
-    .createQuery([table])
-    .filter('user_id', '=', userId)
-    .limit(limit)
-    .start(token);
-
-  ds.runQuery(q, (err, entities, nextQuery) => {
-    if (err) {
-      cb(err);
-      return;
-    }
-    const hasMore =
-      nextQuery.moreResults !== Datastore.NO_MORE_RESULTS
-        ? nextQuery.endCursor
-        : false;
-    cb(null, entities.map(commons.fromDatastore), hasMore);
-  });
-}
+*/
 
 function create(question, answerList, cb){
   const key = ds.key(table);
   const entity = {
     key: key,
-    data: commons.toDatastore(question, ['description']),
+    data: commons.toDatastore(question, excludeFromIndexes),
   };
 
   ds.save(entity, err => {
@@ -113,24 +93,17 @@ function create(question, answerList, cb){
 }
 
 function update(id, data, cb) {
-  commons.update(id, data, cb, table);
+  commons.update(id, data, table, cb);
 }
 
 function read(ids, cb) {
-  commons.read(ids, cb, table);
-}
-
-function _delete(id, cb) {
-  commons._delete(id, data, cb, table);
+  commons.read(ids, table, (err, entity)) => {
+  });
 }
 
 module.exports = {
-  /*
-  update: update,
-  _delete: _delete,
-  */
   read: read,
   create: create,
   list: list,
-  find_by_id: find_by_id
+  //find_by_id: find_by_id
 };
