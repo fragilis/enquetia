@@ -21,8 +21,9 @@ block content
         p.card-text
           a #test
         each answer, index in question.answers
+          input.form-control(type="hidden", name="answers[]", id="answer"+index, value=answer)
           .form-check.form-check-inline.mb-2
-            input.form-check-input(id="answer"+index, name="answers[]", type=question.answer_type)
+            input.form-check-input(id="answer"+index, name="answer", type=question.answer_type)
             label.form-check-label(for="answer"+index) #{answer}
         - var time_left = "残り"
         if parseInt(question.period_hours/24) > 0

@@ -128,6 +128,7 @@ router.get('/add', (req, res) => {
 
 router.post('/add', validation.checkQuestion,
   (req, res, next) => {
+    console.log('req.body: ', req.body)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log('errors:', errors);
@@ -135,36 +136,41 @@ router.post('/add', validation.checkQuestion,
       res.redirect(`${req.baseUrl}/add`);
       return;
     }
-    const question = {
-      title: req.body.title,
-      detail: req.body.detail,
-      answer_type: req.body.answer_type,
-      period_hours: req.body.period_hours,
-      publish_status: req.body.publish_status,
-      published_at: Date.now()
-    };
+    if(req.body.is_confirmed === "1" && req.body.create !== undefined){
+      const question = {
+        title: req.body.title,
+        detail: req.body.detail,
+        answer_type: req.body.answer_type,
+        period_hours: req.body.period_hours,
+        count: 0,
+        publish_status: req.body.publish_status,
+        published_at: Date.now()
+      };
+      const answers = req.body.answers.map(answer => {
+        const entity = {
+          content: answer,
+          count: 0
+        };
+        return entity;
+      });
 
-    // If the user is logged in, set them as the creator of the question.
-    if (req.user) {
-      question.user_id = req.user.id;
-    } else {
-      question.user_id = 0;
-    }
+      // If the user is logged in, set them as the creator of the question.
+      if (req.user) {
+        question.user_id = req.user.id;
+      } else {
+        question.user_id = 0;
+      }
 
-    if(req.body.is_confirmed === "1"){
       // Save the data to the databasquestione.
-      models.questions.create(question, (err, savedData) => {
+      models.questions.create(question, answers, (err, savedData) => {
         if (err) {
+          console.log('err: ', err);
           next(err);
           return;
         }
-        const answers = req.body.answers.map((answer) => {
-          return {content: answer, question_id: savedData.id};
-        });
         res.redirect(`${req.baseUrl}/${savedData.id}`);
       });
     }else{
-      console.log('validation has passed');
       req.session.question = req.body;
       res.redirect(`${req.baseUrl}/confirm`);
     }

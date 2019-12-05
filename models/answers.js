@@ -17,6 +17,7 @@ const {Datastore} = require('@google-cloud/datastore');
 const ds = new Datastore();
 const table = 'Answers';
 const commons = require('./common_methods');
+const excludeFromIndexes = ['content', 'count'];
 
 // Lists all table in the Datastore sorted alphabetically by title.
 // The ``limit`` argument determines the maximum amount of results to
@@ -64,6 +65,23 @@ function listBy(userId, limit, token, cb) {
   });
 }
 
+function create(answers, question_id, cb){
+  const answers_array = answers instanceof Array ? answers : [answers];
+  const entities = answers_array.map(answer => {
+    answer.question_id = question_id;
+    const key = ds.key(table);
+    const entity = {
+      key: key,
+      data: commons.toDatastore(answer, ['description']),
+    };
+    return entity;
+  });
+
+  ds.save(entities, err => {
+    cb(err);
+  });
+}
+
 function update(id, data, cb) {
   commons.update(id, data, cb, table);
 }
@@ -77,10 +95,8 @@ function _delete(id, cb) {
 }
 
 module.exports = {
+  create: create,
   /*
-  create: (data, cb) => {
-    update(null, data, cb);
-  },
   read: read,
   update: update,
   delete: _delete,

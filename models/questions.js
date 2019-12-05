@@ -18,6 +18,7 @@ const ds = new Datastore();
 const table = 'Questions';
 const commons = require('./common_methods');
 const answers = require('./answers');
+const excludeFromIndexes = ['answer_type', 'count', 'detail', 'period_hours', 'title'];
 
 // Lists all table in the Datastore sorted alphabetically by title.
 // The ``limit`` argument determines the maximum amount of results to
@@ -88,12 +89,35 @@ function listBy(userId, limit, token, cb) {
   });
 }
 
+function create(question, answerList, cb){
+  const key = ds.key(table);
+  const entity = {
+    key: key,
+    data: commons.toDatastore(question, ['description']),
+  };
+
+  ds.save(entity, err => {
+    if (err) {
+      cosnole.log('failed to save entity: ', entity);
+      cb(err, null);
+    }
+    answers.create(answerList, entity.key.id, err2 => {
+      if (err2) {
+        cosnole.log('failed to save answerList: ', answerList);
+        cb(err2, null);
+      }
+      question.id = entity.key.id;
+      cb(null, question);
+    });
+  });
+}
+
 function update(id, data, cb) {
   commons.update(id, data, cb, table);
 }
 
 function read(ids, cb) {
-  commons.read(id, data, cb, table);
+  commons.read(ids, cb, table);
 }
 
 function _delete(id, cb) {
@@ -101,12 +125,12 @@ function _delete(id, cb) {
 }
 
 module.exports = {
-  create: (data, cb) => {
-    update(null, data, cb);
-  },
-  read: read,
+  /*
   update: update,
-  delete: _delete,
+  _delete: _delete,
+  */
+  read: read,
+  create: create,
   list: list,
   find_by_id: find_by_id
 };
