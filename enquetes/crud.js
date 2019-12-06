@@ -141,9 +141,9 @@ router.post('/add', validation.checkQuestion,
         title: req.body.title,
         detail: req.body.detail,
         answer_type: req.body.answer_type,
-        period_hours: req.body.period_hours,
+        period_hours: parseInt(req.body.period_hours, 10),
         count: 0,
-        publish_status: req.body.publish_status,
+        publish_status: parseInt(req.body.publish_status, 10),
         published_at: Date.now()
       };
       const answers = req.body.answers.map(answer => {
@@ -168,7 +168,11 @@ router.post('/add', validation.checkQuestion,
           next(err);
           return;
         }
-        res.redirect(`${req.baseUrl}/${savedData.id}`);
+        if (req.user) {
+          res.redirect(`${req.baseUrl}/mine`);
+        } else {
+          res.redirect(`${req.baseUrl}`);
+        }
       });
     }else{
       req.session.question = req.body;
@@ -242,8 +246,9 @@ router.get('/confirm', (req, res, next) => {
  * Display a question.
  */
 router.get('/:question', (req, res, next) => {
-  models.questions.read(req.params.question, (err, entity) => {
+  models.questions.findById(req.params.question, (err, entity) => {
     if (err) {
+      console.log('failed to find question at crud.get(). err: ', err2);
       next(err);
       return;
     }

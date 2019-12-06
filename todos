@@ -1,2 +1,7 @@
 選択肢が追加上限に達したときのエラーメッセージ
 Questions.published_atがIntで登録されている
+Questions.readしたときにAnswers.readをしていない問題
+hashtagまわり
+権限管理
+
+投票画面で選択肢を選ばず投票しようとしたときにエラーメッセージ

@@ -21,8 +21,9 @@ const excludeFromIndexes = ['content', 'count'];
 
 function create(answers, question_id, cb){
   const answers_array = answers instanceof Array ? answers : [answers];
-  const entities = answers_array.map(answer => {
+  const entities = answers_array.map((answer, index) => {
     answer.question_id = question_id;
+    answer.sortOrder = index;
     const key = ds.key(table);
     const entity = {
       key: key,
@@ -36,6 +37,22 @@ function create(answers, question_id, cb){
   });
 }
 
+function findByParentId(question_id, cb) {
+  const q = ds
+    .createQuery([table])
+    .filter('question_id', question_id)
+    .order("sortOrder");
+
+  ds.runQuery(q, (err, entities, nextQuery) => {
+    if (err) {
+      cb(err);
+      return;
+    }
+    cb(null, entities.map(commons.fromDatastore));
+  });
+}
+
 module.exports = {
   create: create,
+  findByParentId: findByParentId,
 };

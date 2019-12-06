@@ -96,14 +96,30 @@ function update(id, data, cb) {
   commons.update(id, data, table, cb);
 }
 
-function read(ids, cb) {
-  commons.read(ids, table, (err, entity)) => {
+function read(id, cb) {
+  commons.read(id, table, cb);
+}
+
+function findById (ids, cb) {
+  commons.read(ids, table, (err, [question]) => {
+    if (err) {
+      console.log('failed to read question. err: ', err);
+      cb(err);
+    }
+    answers.findByParentId(question.id, (err2, answerList) => {
+      if (err2) {
+        console.log('failed to read answers. err: ', err2);
+        cb(err);
+      }
+      question.answers = answerList.map(answer => answer.content);
+      cb(null, question);
+    });
   });
 }
 
 module.exports = {
   read: read,
+  findById: findById,
   create: create,
   list: list,
-  //find_by_id: find_by_id
 };
