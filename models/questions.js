@@ -18,7 +18,7 @@ const ds = new Datastore();
 const table = 'Questions';
 const commons = require('./common_methods');
 const answers = require('./answers');
-const excludeFromIndexes = ['answer_type', 'count', 'detail', 'period_hours', 'title'];
+const excludeFromIndexes = ['answer_type', 'count', 'description', 'period_hours', 'title'];
 
 // Lists all table in the Datastore sorted alphabetically by title.
 // The ``limit`` argument determines the maximum amount of results to
@@ -32,9 +32,10 @@ function list(limit, token, cb) {
 
   const q = ds
     .createQuery([table])
-    .limit(limit)
-    //.order("publishedAt")
+    .filter('publish_status', 1)
+    .order("published_at")
     .order("user_id")
+    .limit(limit)
     .start(token);
 
   ds.runQuery(q, (err, entities, nextQuery) => {

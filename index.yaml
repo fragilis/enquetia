@@ -1,0 +1,12 @@
+indexes:
+
+- kind: Answers
+  properties:
+  - name: question_id
+  - name: sort_order
+
+- kind: Questions
+  properties:
+  - name: publish_status
+  - name: published_at
+  - name: user_id

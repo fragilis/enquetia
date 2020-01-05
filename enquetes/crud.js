@@ -69,9 +69,12 @@ router.get('/', (req, res, next) => {
           next(err);
           return;
         }
-        console.log('news:', entities);
-        const news = entities;
+        const news = entities.filter( e => {
+          const deadline = e.period_hours === -1 ? null : (new Date(e.published_at.getTime())).setHours(e.published_at.getHours() + e.period_hours);
+          return deadline === null || deadline > Date.now();
+        });
         const news_cursor = cursor;
+        console.log('news:', news);
 
         return res.render('enquetes/list.pug', {
           topics: topics,
@@ -139,13 +142,14 @@ router.post('/add', validation.checkQuestion,
     if(req.body.is_confirmed === "1" && req.body.create !== undefined){
       const question = {
         title: req.body.title,
-        detail: req.body.detail,
+        description: req.body.description,
         answer_type: req.body.answer_type,
         period_hours: parseInt(req.body.period_hours, 10),
         count: 0,
         publish_status: parseInt(req.body.publish_status, 10),
-        published_at: Date.now()
+        published_at: new Date()
       };
+
       const answers = req.body.answers.map(answer => {
         const entity = {
           content: answer,

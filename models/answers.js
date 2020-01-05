@@ -23,7 +23,7 @@ function create(answers, question_id, cb){
   const answers_array = answers instanceof Array ? answers : [answers];
   const entities = answers_array.map((answer, index) => {
     answer.question_id = question_id;
-    answer.sortOrder = index;
+    answer.sort_order = index;
     const key = ds.key(table);
     const entity = {
       key: key,
@@ -41,7 +41,7 @@ function findByParentId(question_id, cb) {
   const q = ds
     .createQuery([table])
     .filter('question_id', question_id)
-    .order("sortOrder");
+    .order("sort_order");
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
