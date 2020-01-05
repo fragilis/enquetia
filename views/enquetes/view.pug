@@ -2,7 +2,7 @@ extends ../base.pug
 
 block content
   h3 #{action}
-  form.needs-validation(method="POST", action="vote", novalidate)
+  form.needs-validation(method="POST", novalidate)
     .card
       .card-header #{question.title}
       .card-body
@@ -12,9 +12,14 @@ block content
           p.card-text
             a #test
         each answer, index in question.answers
-          .form-check.form-check-inline.mb-2
-            input.form-check-input(id="answer"+index, name="answer", type=question.answer_type)
+          .form-check.mb-2.ml-5
+            if question.answer_type === "radio" && index === 0
+              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, required)
+            else
+              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type)
             label.form-check-label(for="answer"+index) #{answer}
+            if question.answers.length === index+1
+              .invalid-feedback どれか1つを選択してください。
 
         - var published_at = new Date(question.published_at)
         - var expired = published_at.setHours(published_at.getHours()+parseInt(question.period_hours))
