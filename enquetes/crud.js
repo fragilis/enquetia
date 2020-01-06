@@ -165,7 +165,7 @@ router.post('/add', validation.checkQuestion,
         question.user_id = 0;
       }
 
-      // Save the data to the databasquestione.
+      // Save the data to the database questions.
       models.questions.create(question, answers, (err, savedData) => {
         if (err) {
           console.log('err: ', err);
@@ -252,13 +252,46 @@ router.get('/confirm', (req, res, next) => {
 router.get('/:question', (req, res, next) => {
   models.questions.findById(req.params.question, (err, entity) => {
     if (err) {
-      console.log('failed to find question at crud.get(). err: ', err2);
+      console.log('failed to find question at crud.get(). err: ', err);
       next(err);
       return;
     }
     res.render('enquetes/view.pug', {
       question: entity,
     });
+  });
+});
+
+/**
+ * POST /questions/:id
+ *
+ * Vote to a question.
+ */
+router.post('/:question', (req, res, next) => {
+  console.log('req.body: ', req.body)
+
+  const answer_ids = req.body.answer instanceof Array ?
+    req.body.answer.map(a => parseInt(a, 10)) :
+    [parseInt(req.body.answer, 10)];
+  const vote = {
+    question_id: parseInt(req.body.question_id, 10),
+    answer_ids: answer_ids,
+    finger_print: '',
+    created_at: new Date()
+  };
+
+  // Save the data to the database votes.
+  models.votes.create(vote, (err, savedData) => {
+    if (err) {
+      console.log('err: ', err);
+      res.redirect(`${req.baseUrl}/${req.url}`);
+      return;
+    }
+    if (req.user) {
+      res.redirect(`${req.baseUrl}/mine`);
+    } else {
+      res.redirect(`${req.baseUrl}`);
+    }
   });
 });
 

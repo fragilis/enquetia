@@ -52,7 +52,36 @@ function findByParentId(question_id, cb) {
   });
 }
 
+function incrementCount(ids, cb){
+  commons.read(ids, table, (err, before) => {
+    if (err) {
+      console.log('failed to read answers. err: ', err);
+      cb(err);
+      return;
+    }
+    const before_array = before instanceof Array ? before : [before];
+    before_array.forEach(before => {
+      before.id = undefined;
+      before.count++;
+    });
+    commons.update(ids, before_array, excludeFromIndexes, table, (err, after_array) => {
+      if (err) {
+        console.log('failed to update answers. err: ', err);
+        cb(err);
+        return;
+      }
+      cb(null, after_array);
+    });
+  });
+}
+
+function read(id, cb) {
+  commons.read(id, table, cb);
+}
+
 module.exports = {
   create: create,
   findByParentId: findByParentId,
+  read: read,
+  incrementCount: incrementCount,
 };

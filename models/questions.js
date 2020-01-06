@@ -1,5 +1,4 @@
-// Copyright 2017, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the "License");
+// icensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
@@ -106,14 +105,42 @@ function findById (ids, cb) {
     if (err) {
       console.log('failed to read question. err: ', err);
       cb(err);
+      return;
     }
-    answers.findByParentId(question.id, (err2, answerList) => {
-      if (err2) {
-        console.log('failed to read answers. err: ', err2);
+    if(question !== undefined){
+      answers.findByParentId(question.id, (err2, answerList) => {
+        if (err2) {
+          console.log('failed to read answers. err: ', err2);
+          cb(err2);
+          return;
+        }
+        question.answers = answerList.map(answer => {
+          const obj = {id: answer.id, value: answer.content};
+          return obj;
+        });
+        cb(null, question);
+        return;
+      });
+    }else cb(null, question);
+  });
+}
+
+function incrementCount(id, cb){
+  commons.read(id, table, (err, [before]) => {
+    if (err) {
+      console.log('failed to read question. err: ', err);
+      cb(err);
+      return;
+    }
+    before.id = undefined;
+    before.count++;
+    commons.update(id, before, excludeFromIndexes, table, (err, after) => {
+      if (err) {
+        console.log('failed to update question. err: ', err);
         cb(err);
+        return;
       }
-      question.answers = answerList.map(answer => answer.content);
-      cb(null, question);
+      cb(null, after);
     });
   });
 }
@@ -123,4 +150,5 @@ module.exports = {
   findById: findById,
   create: create,
   list: list,
+  incrementCount: incrementCount,
 };

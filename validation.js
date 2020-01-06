@@ -1,5 +1,6 @@
 const { check } = require('express-validator');
 const config = require('./config');
+const models = require('./models/model-datastore');
 
 const checkQuestion = [
     check('title').exists().isString().isLength({ max: 400 }),
@@ -13,5 +14,5 @@ const checkQuestion = [
 ];
 
 module.exports = {
-  checkQuestion: checkQuestion
+  checkQuestion: checkQuestion,
 };

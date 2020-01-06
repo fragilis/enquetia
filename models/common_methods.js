@@ -78,21 +78,29 @@ function toDatastore(obj, nonIndexed) {
   return results;
 }
 
-function update(id, data, table, cb) {
-  let key;
-  if (id) {
-    key = ds.key([table, parseInt(id, 10)]);
-  } else {
-    key = ds.key(table);
+function update(ids, data, exclude, table, cb) {
+  const ids_array = ids instanceof Array ? ids : [ids];
+  const data_array = data instanceof Array ? data : [data];
+
+  if(ids_array.length != data_array.length){
+    const err = {
+      code: 400,
+      message: 'Bad request',
+    };
+    cb(err, null);
+    return;
   }
 
-  const entity = {
-    key: key,
-    data: toDatastore(data, ['description']),
-  };
+  data_array.forEach(data => {
+    const key = ds.key(table);
+    const entity = {
+      key: key,
+      data: toDatastore(data, exclude),
+    };
+  });
 
-  ds.save(entity, err => {
-    data.id = entity.key.id;
+  ds.save(data_array, err => {
+    //data.id = entity.key.id;
     cb(err, err ? null : data);
   });
 }
