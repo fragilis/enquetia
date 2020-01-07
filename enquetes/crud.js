@@ -260,8 +260,11 @@ router.get('/:question', (req, res, next) => {
     const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
     const current = Date.now();
     const is_expired = expired_at < current ? true : false;
+    const is_voted = req.cookies[req.params.question] != null;
+    question.expired_at = expired_at;
     question.left_hours = (expired_at - current)/1000/60/60;
     question.is_expired = is_expired;
+    question.is_voted = is_voted;
 
     res.render('enquetes/view.pug', {
       question: question,
@@ -294,6 +297,8 @@ router.post('/:question', (req, res, next) => {
       res.redirect(`${req.baseUrl}/${req.url}`);
       return;
     }
+    const expired_at = new Date(parseInt(req.body.question_id, 10));
+    res.cookie(req.body.question_id, '1', {expires: expired_at, httpOnly: true, sameSite: 'Lax'});
     if (req.user) {
       res.redirect(`${req.baseUrl}/mine`);
     } else {
