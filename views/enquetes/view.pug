@@ -11,42 +11,38 @@ block content
         unless question.hashtags === undefined || question.hashtags === ''
           p.card-text
             a #test
-        - var published_at = new Date(question.published_at)
-        - var expired = published_at.setHours(published_at.getHours()+parseInt(question.period_hours))
-        - var current = new Date()
-        - var leftHours = (expired - current)/1000/60/60
-        - var is_expired = leftHours > 0 ? false : true
         input.form-control(type="hidden", name="question_id", id="question_id", value=question.id)
         each answer, index in question.answers
           .form-check.mb-2.ml-5
             if question.answer_type === "radio" && index === 0
-              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=is_expired)
+              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired)
             else
-              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=is_expired)
+              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired)
             label.form-check-label(for="answer"+index) #{answer.value}
             if question.answers.length === index+1
               .invalid-feedback どれか1つを選択してください。
 
         - var time_left = " "
-        if is_expired
+        if question.is_expired
           - time_left += "受付は終了しました"
         else
           - time_left += "残り"
-          if leftHours > 0
-            if parseInt(leftHours/24) > 0
-              - time_left += String(parseInt(lefthours/24, 10)) + "日"
-            - time_left += String(parseInt(leftHours, 10)%24) + "時間"
+          if question.left_hours > 0
+            if parseInt(question.left_hours/24) > 0
+              - time_left += String(parseInt(question.left_hours/24, 10)) + "日"
+            - time_left += String(parseInt(question.left_hours, 10)%24) + "時間"
 
-        - var publish_status = " "
-        if question.publish_status === 1
-          - publish_status += "トップページ公開"
-        else if question.publish_status === 2
-          - publish_status += "トップページ非公開"
+        - var publish_status = ""
+        if !question.is_expired
+          - publish_status += " "
+          if question.publish_status === 1
+            - publish_status += "トップページ公開"
+          else if question.publish_status === 2
+            - publish_status += "トップページ非公開"
 
         p.card-text.clearfix
           small.text-muted #{question.count}票 #{time_left} #{publish_status}
-          - var is_expired = leftHours > 0 ? false : true
-          button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=is_expired) 投票する
+          button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired) 投票する
 
 block script
   script(src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false")

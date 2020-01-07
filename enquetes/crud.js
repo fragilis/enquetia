@@ -250,14 +250,21 @@ router.get('/confirm', (req, res, next) => {
  * Display a question.
  */
 router.get('/:question', (req, res, next) => {
-  models.questions.findById(req.params.question, (err, entity) => {
+  models.questions.findById(req.params.question, (err, question) => {
     if (err) {
       console.log('failed to find question at crud.get(). err: ', err);
       next(err);
       return;
     }
+    const published_at = new Date(question.published_at.getTime());
+    const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
+    const current = Date.now();
+    const is_expired = expired_at < current ? true : false;
+    question.left_hours = (expired_at - current)/1000/60/60;
+    question.is_expired = is_expired;
+
     res.render('enquetes/view.pug', {
-      question: entity,
+      question: question,
     });
   });
 });
