@@ -41,9 +41,10 @@ block content
             - publish_status += "トップページ非公開"
 
         p.card-text.clearfix
-          small.text-muted #{question.count}票 #{time_left} #{publish_status}
+          small.text-muted #{question.count}票 #{time_left} #{publish_status} 
+            a#checkResult 結果を見る
           button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired) 投票する
 
 block script
-  script(src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false")
+  script(type='text/javascript', src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js")
   script(type='text/javascript', src='/js/view.js', id='question', data-json=JSON.stringify(question))

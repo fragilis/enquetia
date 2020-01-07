@@ -6,6 +6,7 @@ $(function () {
       $(this).addClass('was-validated');
     }
   });
+  $('#checkResult').attr('href', location.href.replace(/\/$/, '') + '/result');
   const $question = $('#question').data('json');
   if(!$question.is_expired){
     window.cookieconsent.initialise({
