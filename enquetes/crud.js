@@ -296,6 +296,24 @@ router.post('/:question', (req, res, next) => {
 });
 
 /**
+ * GET /questions/:id/result
+ *
+ * Display a result.
+ */
+router.get('/:question/result', (req, res, next) => {
+  models.questions.findById(req.params.question, (err, question) => {
+    if (err) {
+      console.log('failed to find question. err: ', err);
+      next(err);
+      return;
+    }
+    res.render('enquetes/result.pug', {
+      question: question,
+    });
+  });
+});
+
+/**
  * GET /questions/:id/delete
  *
  * Delete a question.

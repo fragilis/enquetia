@@ -1,0 +1,20 @@
+extends ../base.pug
+
+block content
+  h3 #{action}
+  form.needs-validation(method="POST", novalidate)
+    .card
+      .card-header #{question.title}
+      .card-body
+        unless question.description === undefined || question.description === ''
+          p.card-text #{question.description}
+        unless question.hashtags === undefined || question.hashtags === ''
+          p.card-text
+            a #test
+        canvas(id="resultChart")
+
+block script
+  link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
+  script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+  script(type='text/javascript', src='https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js')
+  script(type='text/javascript', src='/js/result.js', id='question', data-json=JSON.stringify(question))

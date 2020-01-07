@@ -115,7 +115,7 @@ function findById (ids, cb) {
           return;
         }
         question.answers = answerList.map(answer => {
-          const obj = {id: answer.id, value: answer.content};
+          const obj = {id: answer.id, value: answer.content, result: answer.count};
           return obj;
         });
         cb(null, question);
