@@ -12,6 +12,17 @@ block content
           p.card-text
             a #test
         canvas(id="resultChart")
+        - const year = question.published_at.getFullYear()
+        - const month = question.published_at.getMonth()+1
+        - const date = question.published_at.getDate()
+        - const hours = question.published_at.getHours()
+        - const minutes = question.published_at.getMinutes()
+        - const seconds = question.published_at.getSeconds()
+        p.card-text.clearfix
+          small.text-muted.float-right
+            | 公開日時：#{year}年#{month}月#{date}日 #{hours}:#{minutes}:#{seconds}<br />
+            | 回答期間：#{question.period_hours}時間<br />
+            | 総回答数：#{question.count}票
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
