@@ -76,6 +76,9 @@ router.get('/', (req, res, next) => {
         const news_cursor = cursor;
         console.log('news:', news);
 
+        //req.flash('info', 'Flash Message Added');
+        //req.flash('warn', 'Flash Message Added');
+        //req.flash('error', 'Flash Message Added');
         return res.render('enquetes/list.pug', {
           topics: topics,
           news: news,
@@ -168,10 +171,12 @@ router.post('/add', validation.checkQuestion,
       // Save the data to the database questions.
       models.questions.create(question, answers, (err, savedData) => {
         if (err) {
+          req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
           console.log('err: ', err);
           next(err);
           return;
         }
+        req.flash('info', 'アンケートが作成されました。');
         if (req.user) {
           res.redirect(`${req.baseUrl}/mine`);
         } else {
@@ -239,6 +244,9 @@ router.get('/confirm', (req, res, next) => {
     next(err);
     return;
   }
+
+  if(!profile) req.flash('warn', '現在ログインしていないため、作成したアンケートの変更・削除ができません。');
+
   res.render('enquetes/confirm.pug', {
     question: passedVariable
   });

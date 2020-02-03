@@ -2,9 +2,11 @@ extends ../base.pug
 
 block content
   h3 #{action}
+  //-
   .alert.alert-danger.text-center(role="alert") 現在 Enquetia にログインしていません。<br />
     | 「作成する」を押してしまうと、このアンケートを編集・削除できなくなってしまいます。<br />
     a.alert-link(href="#") 今すぐログインする
+
   p 以下のようなアンケートを作成します。<br />よろしいですか？
   form(method="POST", action="add", novalidate)
     input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)

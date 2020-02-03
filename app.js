@@ -30,7 +30,8 @@ const logging = require('./lib/logging');
 const {Datastore} = require('@google-cloud/datastore');
 const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const flash = require('express-flash');
 
 const app = express();
 
@@ -74,6 +75,9 @@ app.use(bodyParser.urlencoded({
 // parse application/json 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(cookieParser());
+
+// flash
+app.use(flash());
 
 // Books
 app.use('/api/enquetes', require('./enquetes/api'));
