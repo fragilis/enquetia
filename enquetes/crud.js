@@ -39,12 +39,9 @@ router.use((req, res, next) => {
  * Display a page of questions (up to ten at a time).
  */
 router.get('/', (req, res, next) => {
-  console.log('Time:', Date.now());
-
-  console.log("starting group_by_question_id");
   models.votes.latest(req.query.pageToken, (err, entities) => {
     if (err) {
-      console.log("error occurs on getting latest votes");
+      req.flash('error', 'アンケートの取得に失敗しました。');
       next(err);
       return;
     }
@@ -58,6 +55,7 @@ router.get('/', (req, res, next) => {
 
     models.questions.read(votes.map(vote => vote.question_id), (err, entities) => {
       if (err) {
+        req.flash('error', 'アンケートの取得に失敗しました。');
         next(err);
         return;
       }
@@ -66,6 +64,7 @@ router.get('/', (req, res, next) => {
 
       models.questions.list(10, req.query.pageToken, (err, entities, cursor) => {
         if (err) {
+          req.flash('error', 'アンケートの取得に失敗しました。');
           next(err);
           return;
         }
@@ -170,6 +169,7 @@ router.post('/add', validation.checkQuestion,
 
       // Save the data to the database questions.
       models.questions.create(question, answers, (err, savedData) => {
+        req.session.question = null;
         if (err) {
           req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
           console.log('err: ', err);
@@ -239,13 +239,13 @@ router.post(
 
 router.get('/confirm', (req, res, next) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
-  req.session.question = null;
+  //req.session.question = null;
   if(passedVariable === undefined){
     next(err);
     return;
   }
 
-  if(!profile) req.flash('warn', '現在ログインしていないため、作成したアンケートの変更・削除ができません。');
+  if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成されたアンケートは変更・削除できなくなります。');
 
   res.render('enquetes/confirm.pug', {
     question: passedVariable
@@ -253,12 +253,12 @@ router.get('/confirm', (req, res, next) => {
 });
 
 /**
- * GET /questions/:id
+ * GET /:id
  *
  * Display a question.
  */
-router.get('/:question', (req, res, next) => {
-  models.questions.findById(req.params.question, (err, question) => {
+router.get('/:question_id', (req, res, next) => {
+  models.questions.findById(req.params.question_id, (err, question) => {
     if (err) {
       console.log('failed to find question at crud.get(). err: ', err);
       next(err);

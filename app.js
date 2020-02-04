@@ -21,17 +21,19 @@ if (process.env.NODE_ENV === 'production') {
 }
 // [END debug]
 
-const path = require('path');
-const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-const config = require('./config');
-const logging = require('./lib/logging');
-const {Datastore} = require('@google-cloud/datastore');
-const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const express = require('express');
 const flash = require('express-flash');
+const session = require('express-session');
+const passport = require('passport');
+const path = require('path');
+
+const {Datastore} = require('@google-cloud/datastore');
+const DatastoreStore = require('@google-cloud/connect-datastore')(session);
+
+const config = require('./config');
+const logging = require('./lib/logging');
 
 const app = express();
 
@@ -80,15 +82,8 @@ app.use(cookieParser());
 app.use(flash());
 
 // Books
-app.use('/api/enquetes', require('./enquetes/api'));
-app.use('/enquetes', require('./enquetes/crud'));
-
-
-
-// Redirect root to /enquetes
-app.get('/', (req, res) => {
-  res.redirect('/enquetes');
-});
+app.use('/api', require('./enquetes/api'));
+app.use('/', require('./enquetes/crud'));
 
 // Add the error logger after all middleware and routes so that
 // it can log errors from the whole application. Any custom error
@@ -98,15 +93,17 @@ app.use(logging.errorLogger);
 
 // Basic 404 handler
 app.use((req, res) => {
-  res.status(404).send('Not Found');
+  //res.status(404).send('Not Found');
+  res.status(404).render('404.pug');
 });
 
 // Basic error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   /* jshint unused:false */
   // If our routes specified a specific response, then send that. Otherwise,
   // send a generic message so as not to leak anything.
-  res.status(500).send(err.response || 'Something broke!');
+  //res.status(500).send(err.response || 'Something broke!');
+  res.status(500).render('500.pug');
 });
 // [END errors]
 
