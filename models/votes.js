@@ -20,7 +20,14 @@ function latest(token, cb) {
       console.log("ERROR: ", err);
       return cb(err);
     }
-    return cb(null, entities.map(commons.fromDatastore));
+    const entities_sorted = entities.map(commons.fromDatastore).reduce((acc, cur) => {
+      const obj = acc.find(e => e.question_id === cur.question_id);
+      if (obj === undefined) acc.push({question_id: cur.question_id, count: 1});
+      else acc.find(e => e.question_id === cur.question_id).count++;
+      return acc;
+    }, []).sort((a, b) => {return a.count - b.count;});
+
+    return cb(null, entities_sorted);
   });
 }
 

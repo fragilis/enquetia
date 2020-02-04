@@ -5,9 +5,20 @@ const ds = new Datastore();
 const table = 'Questions';
 const commons = require('./common_methods');
 const answers = require('./answers');
+const votes = require('./votes');
 const excludeFromIndexes = ['answer_type', 'count', 'description', 'period_hours', 'title'];
 
-function list(limit, token, cb) {
+
+function popular(token, cb) {
+  votes.latest(token, (err, votes) => {
+    if(err) {
+      return cb(err);
+    }
+    return read(votes.map(vote => vote.question_id), cb);
+  });
+}
+
+function latest(limit, token, cb) {
   const q = ds
     .createQuery([table])
     .filter('publish_status', 1)
@@ -20,6 +31,10 @@ function list(limit, token, cb) {
     if (err) {
       return cb(err);
     }
+    const entities_filtered = entities.filter( e => {
+      const deadline = e.period_hours === -1 ? null : (new Date(e.published_at.getTime())).setHours(e.published_at.getHours() + e.period_hours);
+      return deadline === null || deadline > Date.now();
+    });
     const hasMore =
       nextQuery.moreResults !== Datastore.NO_MORE_RESULTS
         ? nextQuery.endCursor
@@ -55,8 +70,8 @@ function update(id, data, cb) {
   commons.update(id, data, table, cb);
 }
 
-function read(id, cb) {
-  commons.read(id, table, cb);
+function read(ids, cb) {
+  commons.read(ids, table, cb);
 }
 
 function findById (ids, cb) {
@@ -103,6 +118,7 @@ module.exports = {
   read: read,
   findById: findById,
   create: create,
-  list: list,
+  latest: latest,
+  popular: popular,
   incrementCount: incrementCount,
 };

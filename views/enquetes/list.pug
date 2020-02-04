@@ -19,7 +19,7 @@ block content
     ul.list-group.list-group-flush
       each question in topics
         li.list-group-item
-          a(href=`/enquetes/${question.id}`)
+          a(href=`/${question.id}`)
             p= question.content
           p= question.hashtags
     if !topics.length
@@ -30,7 +30,7 @@ block content
     ul.list-group.list-group-flush
       each question in news
         li.list-group-item
-          a(href=`/enquetes/${question.id}`)
+          a(href=`/${question.id}`)
             span= question.title
           if question.hashtags !== undefined && question.hashtags !== ''
             span= question.hashtags
