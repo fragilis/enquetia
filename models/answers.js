@@ -1,16 +1,3 @@
-// Copyright 2017, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 
 const {Datastore} = require('@google-cloud/datastore');
@@ -45,10 +32,9 @@ function findByParentId(question_id, cb) {
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
-      cb(err);
-      return;
+      return cb(err);
     }
-    cb(null, entities.map(commons.fromDatastore));
+    return cb(null, entities.map(commons.fromDatastore));
   });
 }
 
@@ -56,8 +42,7 @@ function incrementCount(ids, cb){
   commons.read(ids, table, (err, before) => {
     if (err) {
       console.log('failed to read answers. err: ', err);
-      cb(err);
-      return;
+      return cb(err);
     }
     const before_array = before instanceof Array ? before : [before];
     before_array.forEach(before => {
@@ -67,10 +52,9 @@ function incrementCount(ids, cb){
     commons.update(ids, before_array, excludeFromIndexes, table, (err, after_array) => {
       if (err) {
         console.log('failed to update answers. err: ', err);
-        cb(err);
-        return;
+        return cb(err);
       }
-      cb(null, after_array);
+      return cb(null, after_array);
     });
   });
 }
