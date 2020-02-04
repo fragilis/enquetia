@@ -15,36 +15,31 @@ extends ../base.pug
 
 block content
   h3.mt-3 今話題のアンケート
-  ul.list-group.list-group-flush
-    each question in topics
-      li.list-group-item
-        a(href=`/enquetes/${question.id}`)
-          p= question.content
-        p= question.hashtags
-
-  if !topics.length
-    p アンケートはありません。
-
-  if nextPageToken
-    nav
-      ul.pager
-        li
-          a(href=`?pageToken=${encodeURIComponent(nextPageToken)}`) More
+  if topics != null
+    ul.list-group.list-group-flush
+      each question in topics
+        li.list-group-item
+          a(href=`/enquetes/${question.id}`)
+            p= question.content
+          p= question.hashtags
+    if !topics.length
+      p アンケートはありません。
 
   h3 最新アンケート
-  ul.list-group.list-group-flush
-    each question in news
-      li.list-group-item
-        a(href=`/enquetes/${question.id}`)
-          span= question.title
-        if question.hashtags !== undefined && question.hashtags !== ''
-          span= question.hashtags
+  if news != null
+    ul.list-group.list-group-flush
+      each question in news
+        li.list-group-item
+          a(href=`/enquetes/${question.id}`)
+            span= question.title
+          if question.hashtags !== undefined && question.hashtags !== ''
+            span= question.hashtags
+    if !news.length
+      p アンケートはありません。
 
-  if !news.length
-    p アンケートはありません。
-
-  if nextPageToken
+  if newsCursor
     nav
       ul.pager
         li
-          a(href=`?pageToken=${encodeURIComponent(nextPageToken)}`) More
+          a(href=`?pageToken=${encodeURIComponent(newsCursor)}`) More
+

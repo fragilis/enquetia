@@ -42,10 +42,8 @@ router.get('/', (req, res, next) => {
   models.votes.latest(req.query.pageToken, (err, entities) => {
     if (err) {
       req.flash('error', 'アンケートの取得に失敗しました。');
-      next(err);
-      return;
+      return next('route');
     }
-    console.log('votes.length:', entities.length);
     const votes = entities.reduce((acc, cur) => {
       const obj = acc.find(e => e.question_id === cur.question_id);
       if (obj === undefined) acc.push({question_id: cur.question_id, count: 1});
@@ -56,36 +54,33 @@ router.get('/', (req, res, next) => {
     models.questions.read(votes.map(vote => vote.question_id), (err, entities) => {
       if (err) {
         req.flash('error', 'アンケートの取得に失敗しました。');
-        next(err);
-        return;
+        return next('route');
       }
-      console.log('topics:', entities);
       const topics = entities;
 
       models.questions.list(10, req.query.pageToken, (err, entities, cursor) => {
         if (err) {
           req.flash('error', 'アンケートの取得に失敗しました。');
-          next(err);
-          return;
+          return next('route');
         }
         const news = entities.filter( e => {
           const deadline = e.period_hours === -1 ? null : (new Date(e.published_at.getTime())).setHours(e.published_at.getHours() + e.period_hours);
           return deadline === null || deadline > Date.now();
         });
-        const news_cursor = cursor;
-        console.log('news:', news);
+        const newsCursor = cursor;
 
-        //req.flash('info', 'Flash Message Added');
-        //req.flash('warn', 'Flash Message Added');
-        //req.flash('error', 'Flash Message Added');
         return res.render('enquetes/list.pug', {
           topics: topics,
           news: news,
-          news_cursor: news_cursor,
+          newsCursor: newsCursor,
         });
       });
     });
   });
+});
+
+router.get('/', (req, res, next) => {
+  return res.render('enquetes/list.pug');
 });
 
 // Use the oauth2.required middleware to ensure that only logged-in users
