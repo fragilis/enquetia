@@ -15,7 +15,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('../models/model-datastore');
+const model = require('../../models/model-datastore');
 
 const router = express.Router();
 

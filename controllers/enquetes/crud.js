@@ -1,25 +1,12 @@
-// Copyright 2017, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 
 const express = require('express');
-const images = require('../lib/images');
-const oauth2 = require('../lib/oauth2');
-const models = require('../models/model-datastore');
+const images = require('../../lib/images');
+const oauth2 = require('../../lib/oauth2');
+const models = require('../../models/model-datastore');
 const { validationResult } = require('express-validator');
-const validation = require('../validation');
-const config = require('../config');
+const validation = require('../../validation');
+const config = require('../../config');
 
 const router = express.Router();
 
@@ -79,9 +66,11 @@ router.get('/', (req, res, next) => {
   });
 });
 
+// indexページでエラーが発生したとき用のルーティング
 router.get('/', (req, res, next) => {
   return res.render('enquetes/list.pug');
 });
+
 
 // Use the oauth2.required middleware to ensure that only logged-in users
 // can access this handler.
@@ -109,6 +98,7 @@ router.get('/mine', oauth2.required, (req, res, next) => {
  * Display a form for creating a question.
  */
 router.get('/add', (req, res) => {
+  console.log("+-------------------------------+")
   const passedVariable = req.session.question != undefined ? req.session.question : {};
   req.session.question = null;
   passedVariable.MAX_ITEM_COUNT = config.get('MAX_ITEM_COUNT');
@@ -172,6 +162,7 @@ router.post('/add', validation.checkQuestion,
           return;
         }
         req.flash('info', 'アンケートが作成されました。');
+        req.session.question = null;
         if (req.user) {
           res.redirect(`${req.baseUrl}/mine`);
         } else {
@@ -240,7 +231,7 @@ router.get('/confirm', (req, res, next) => {
     return;
   }
 
-  if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成されたアンケートは変更・削除できなくなります。');
+  if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で変更・削除できません。');
 
   res.render('enquetes/confirm.pug', {
     question: passedVariable

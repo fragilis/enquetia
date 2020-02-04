@@ -29,13 +29,13 @@ html(lang="jp")
     link(rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css")
   body
     nav.navbar.navbar-light.bg-light
-      a.navbar-brand(href="/enquetes") Enquetia
+      a.navbar-brand(href="/") Enquetia
       ul.navbar-nav.mr-auto
         li.nav-item
-          a.btn.btn-sm.btn-outline-primary(href="/enquetes/add") アンケートを作る
+          a.btn.btn-sm.btn-outline-primary(href="/add") アンケートを作る
       span.navbar-text.navbar-right
         if profile
-          a(href="/enquetes/mine" title="マイページに移動")
+          a(href="/mine" title="マイページに移動")
             if profile.image
               img.rounded-circle.mr-2(src=profile.image, width=30)
             else

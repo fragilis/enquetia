@@ -81,9 +81,9 @@ app.use(cookieParser());
 // flash
 app.use(flash());
 
-// Books
-app.use('/api', require('./enquetes/api'));
-app.use('/', require('./enquetes/crud'));
+app.use('/api', require('./controllers/enquetes/api'));
+app.use('/', require('./controllers/enquetes/crud'));
+app.use('/mypage', require('./controllers/mypages/crud'));
 
 // Add the error logger after all middleware and routes so that
 // it can log errors from the whole application. Any custom error
