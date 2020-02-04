@@ -48,7 +48,7 @@ block content
             small.text-muted #{question.count}票 #{time_left} #{publish_status} 
               if question.is_expired || question.is_voted
                 a#checkResult 結果を見る
-            button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired || question.is_voted) 投票する
+            button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
 
 block script
   script(type='text/javascript', src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js")

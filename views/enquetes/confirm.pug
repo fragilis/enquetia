@@ -38,7 +38,7 @@ block content
     .row.mt-3
       .col.clearfix
         button.btn.btn-outline-danger.mt-2.ml-2.float-right(type="submit", name="modify") 修正する
-        button.btn.btn-outline-primary.mt-2.ml-2.float-right(type="submit", name="create") 作成する
+        button.btn.btn-outline-primary.mt-2.ml-2.float-right(type="submit", name="create", onclick="($this).prop('disabled', true)") 作成する
 
 //- block script
   script(type='text/javascript', src='/js/confirm.js', id='question', data-json=JSON.stringify(question))
