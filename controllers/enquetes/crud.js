@@ -75,6 +75,7 @@ router.get('/add', (req, res) => {
  */
 router.post('/add', validation.checkQuestion,
   (req, res, next) => {
+    req.session.question = null;
 
     // validationエラーを処理
     const errors = validationResult(req);
@@ -94,14 +95,14 @@ router.post('/add', validation.checkQuestion,
         if (err) {
           req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
           console.log('err: ', err);
+          req.session.question = req.body;
           res.redirect(`${req.baseUrl}/confirm`);
         }
-        req.session.question = null;
         req.flash('info', 'アンケートが作成されました。');
         if (req.user) {
           res.redirect(`${req.baseUrl}/mine`);
         } else {
-          res.redirect(`${req.baseUrl}`);
+          res.redirect(`${req.baseUrl}/`);
         }
       });
     }
@@ -140,7 +141,7 @@ router.get('/:question_id', (req, res, next) => {
       req.flash('error', 'アンケートの取得に失敗しました。');
       res.render('enquetes/view.pug');
     }
-    const questionWithConditions = services.setConditions(question);
+    const questionWithConditions = services.setConditions(question, req.cookies[req.params.question]);
 
     res.render('enquetes/view.pug', {
       question: questionWithConditions,

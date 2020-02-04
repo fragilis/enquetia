@@ -25,6 +25,7 @@ function setEnqueteValues(body, user){
   } else {
     question.user_id = 0;
   }
+  return [question, answers];
 }
 
 function setVoteValues(body){
@@ -41,12 +42,12 @@ function setVoteValues(body){
   return vite;
 }
 
-function setConditions(question){
+function setConditions(question, cookie){
   const published_at = new Date(question.published_at.getTime());
   const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
   const current = Date.now();
   const is_expired = expired_at < current ? true : false;
-  const is_voted = req.cookies[req.params.question] != null;
+  const is_voted = cookie != null;
   question.expired_at = expired_at;
   question.left_hours = (expired_at - current)/1000/60/60;
   question.is_expired = is_expired;
