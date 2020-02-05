@@ -8,6 +8,12 @@ const validation = require('../../validation');
 const config = require('../../config');
 const services = require('../../services/enquetes');
 const router = express.Router();
+const bodyParser = require('body-parser');
+const csurf = require('csurf');
+
+// setup route middlewares
+const csrfProtection = csurf({ cookie: true });
+const parseForm = bodyParser.urlencoded({ extended: false });
 
 // Set Content-Type for all responses for these routes
 router.use((req, res, next) => {
@@ -18,18 +24,18 @@ router.use((req, res, next) => {
 
 
 /**
- * GET /questions
+ * GET /
  *
- * Display a page of questions (up to ten at a time).
+ * 人気のアンケートと最新アンケートを一覧表示
  */
 router.get('/', (req, res, next) => {
-  // 投票数の多いアンケートを取得
+  // 人気のアンケートを取得
   models.questions.popular(req.query.pageToken, (err, topics) => {
     if (err) {
       req.flash('error', 'アンケートの取得に失敗しました。');
       return next('route');
     }
-    // 最新のアンケートを取得
+    // 最新アンケートを取得
     models.questions.latest(10, req.query.pageToken, (err, news, newsCursor) => {
       if (err) {
         req.flash('error', 'アンケートの取得に失敗しました。');
@@ -53,7 +59,7 @@ router.get('/', (req, res, next) => {
 /**
  * GET /enquetes/add
  *
- * Display a form for creating a question.
+ * アンケート作成フォームを表示
  */
 router.get('/add', (req, res) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
@@ -69,9 +75,9 @@ router.get('/add', (req, res) => {
 
 
 /**
- * POST /enquetes/add
+ * POST /add
  *
- * Create a question.
+ * バリデーションチェックをして確認画面にリダイレクト
  */
 router.post('/add', validation.checkQuestion,
   (req, res, next) => {
@@ -84,56 +90,77 @@ router.post('/add', validation.checkQuestion,
       res.redirect(`${req.baseUrl}/add`);
     }
 
-    // ユーザーの確認が完了してる場合はアンケートを保存
-    if(req.body.is_confirmed === "1" && req.body.create !== undefined){
-
-      // formの値をquestionとanswersに格納
-      const [question, answers] = services.setEnqueteValues(req.body, req.user);
-
-      // アンケートをDBに保存
-      models.questions.create(question, answers, (err, savedData) => {
-        if (err) {
-          req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
-          console.log('err: ', err);
-          req.session.question = req.body;
-          res.redirect(`${req.baseUrl}/confirm`);
-        }
-        req.flash('info', 'アンケートが作成されました。');
-        if (req.user) {
-          res.redirect(`${req.baseUrl}/mine`);
-        } else {
-          res.redirect(`${req.baseUrl}/`);
-        }
-      });
-    }
-    // ユーザーの確認が未了の場合は確認画面に遷移
-    else{
-      req.session.question = req.body;
-      res.redirect(`${req.baseUrl}/confirm`);
-    }
+    // 確認画面にリダイレクト
+    req.session.question = req.body;
+    res.redirect(`${req.baseUrl}/confirm`);
   }
 );
 
 
-router.get('/confirm', (req, res, next) => {
+/**
+ * GET /confirm
+ *
+ * 入力内容確認画面を表示
+ */
+router.get('/confirm', csrfProtection, (req, res, next) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
   if(passedVariable === undefined){
-    next(err);
-    return;
+    req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+    req.session.question = req.body;
+    res.redirect(`${req.baseUrl}/confirm`);
   }
 
   if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で変更・削除できません。');
 
   res.render('enquetes/confirm.pug', {
-    question: passedVariable
+    question: passedVariable,
+    csrfToken: req.csrfToken()
   });
 });
 
 
 /**
- * GET /:id
+ * POST /confirm
  *
- * アンケート投票画面
+ * バリデーションチェック（2回目）をして今度こそ登録
+ */
+router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
+  (req, res, next) => {
+    req.session.question = null;
+
+    // validationエラーを処理
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      req.session.question = req.body;
+      res.redirect(`${req.baseUrl}/add`);
+    }
+
+    // formの値をquestionとanswersに格納
+    const [question, answers] = services.setEnqueteValues(req.body, req.user);
+
+    // アンケートをDBに保存
+    models.questions.create(question, answers, (err, savedData) => {
+      if (err) {
+        req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+        console.log('err: ', err);
+        req.session.question = req.body;
+        res.redirect(`${req.baseUrl}/confirm`);
+      }
+      req.flash('info', 'アンケートが作成されました。');
+      if (req.user) {
+        res.redirect(`${req.baseUrl}/mypage`);
+      } else {
+        res.redirect(`${req.baseUrl}/`);
+      }
+    });
+  }
+);
+
+
+/**
+ * GET /:question_id
+ *
+ * アンケート投票画面を表示
  */
 router.get('/:question_id', (req, res, next) => {
   models.questions.findById(req.params.question_id, (err, question) => {
@@ -151,14 +178,14 @@ router.get('/:question_id', (req, res, next) => {
 
 
 /**
- * POST /:id
+ * POST /:question_id
  *
- * Vote to a question.
+ * アンケートに投票
  */
 router.post('/:question_id', (req, res, next) => {
   const vote = services.setVoteValues(req.body);
 
-  // Save the data to the database votes.
+  // 投票結果をDBに保存
   models.votes.create(vote, (err, savedData) => {
     if (err) {
       console.log('err: ', err);
@@ -174,9 +201,9 @@ router.post('/:question_id', (req, res, next) => {
 
 
 /**
- * GET /questions/:id/result
+ * GET /:question_id/result
  *
- * Display a result.
+ * 投票結果を表示
  */
 router.get('/:question_id/result', (req, res, next) => {
   models.questions.findById(req.params.question_id, (err, question) => {
@@ -192,20 +219,7 @@ router.get('/:question_id/result', (req, res, next) => {
 
 
 
-/**
- * GET /questions/:id/delete
- *
- * Delete a question.
- */
-router.get('/:question/delete', (req, res, next) => {
-  models.questions.delete(req.params.question, err => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.redirect(req.baseUrl);
-  });
-});
+
 
 /**
  * GET /enquetes/:id/edit
@@ -252,6 +266,23 @@ router.post(
     });
   }
 );
+
+/**
+ * GET /questions/:id/delete
+ *
+ * Delete a question.
+ */
+router.get('/:question/delete', (req, res, next) => {
+  models.questions.delete(req.params.question, err => {
+    if (err) {
+      next(err);
+      return;
+    }
+    res.redirect(req.baseUrl);
+  });
+});
+
+
 
 
 

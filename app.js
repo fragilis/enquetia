@@ -23,6 +23,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const csurf = require('csurf');
 const express = require('express');
 const flash = require('express-flash');
 const session = require('express-session');

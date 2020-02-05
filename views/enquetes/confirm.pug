@@ -3,11 +3,11 @@ extends ../base.pug
 block content
   h3 #{action}
   p 以下のようなアンケートを作成します。<br />よろしいですか？
-  form(method="POST", action="add", novalidate)
+  form(method="POST", novalidate)
     input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
     input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
     input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
-    input.form-control(type="hidden", name="is_confirmed", id="is_confirmed", value=1)
+    input.form-control(type="hidden", name="_csrf", value=csrfToken)
     .card
       .card-header
         input.form-control-plaintext(type="text", name="title", id="title", value=question.title, readonly)
