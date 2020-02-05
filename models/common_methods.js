@@ -25,7 +25,7 @@ function toDatastore(obj, nonIndexed) {
 }
 
 function update(ids, data, exclude, table, cb) {
-  const ids_array = ids instanceof Array ? ids : [ids];
+  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
   const data_array = data instanceof Array ? data : [data];
 
   if(ids_array.length != data_array.length){
@@ -51,7 +51,7 @@ function update(ids, data, exclude, table, cb) {
 }
 
 function read(ids, table, cb) {
-  const ids_array = ids instanceof Array ? ids : [ids];
+  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
   const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
   if(keys.length > 0){
     ds.get(keys, (err, entities) => {
