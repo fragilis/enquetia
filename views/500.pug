@@ -1,1 +1,19 @@
-500500500
+extends ./base.pug
+
+block content
+  .container
+    .row
+      .col-md-12
+        .error-template
+          h1 500 Internal Server Error
+          .error-details.mt-3.mb-4
+            | サーバーがエラーを検出したため処理を実行できませんでした。<br />
+            | しばらく時間をおいてからもう一度アクセスして頂くか、
+            | 管理者にお問い合わせください。
+          .error-actions
+            a.btn.btn-primary(href="/")
+              i.fas.fa-home.mr-2
+              | ホームに戻る
+            a.btn.btn-secondary(href="#")
+              i.fas.fa-envelope.mr-2
+              | 問い合わせる

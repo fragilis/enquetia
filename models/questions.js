@@ -86,16 +86,23 @@ function findById (ids, cb) {
           console.log('failed to read answers. err: ', err2);
           return cb(err2);
         }
-        question.answers = answerList.map(answer => {
-          const obj = {id: answer.id, value: answer.content, result: answer.count};
-          return obj;
+        answers.getVoteCounts(answerList, (err3, answerListWithCount) => {
+          if (err3) {
+            console.log('failed to get vote counts. err: ', err3);
+            return cb(err3);
+          }
+          question.answers = answerListWithCount.map(answer => {
+            const obj = {id: answer.id, value: answer.content, result: answer.count};
+            return obj;
+          });
+          return cb(null, question);
         });
-        return cb(null, question);
       });
     }else return cb(null, question);
   });
 }
 
+/*
 function incrementCount(id, cb){
   commons.read(id, table, (err, [before]) => {
     if (err) {
@@ -113,6 +120,7 @@ function incrementCount(id, cb){
     });
   });
 }
+*/
 
 module.exports = {
   read: read,
@@ -120,5 +128,4 @@ module.exports = {
   create: create,
   latest: latest,
   popular: popular,
-  incrementCount: incrementCount,
 };

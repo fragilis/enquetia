@@ -5,6 +5,7 @@ const ds = new Datastore();
 const table = 'Answers';
 const commons = require('./common_methods');
 const excludeFromIndexes = ['content', 'count'];
+const votes = require('./votes');
 
 function create(answers, question_id, cb){
   const answers_array = answers instanceof Array ? answers : [answers];
@@ -38,6 +39,7 @@ function findByParentId(question_id, cb) {
   });
 }
 
+/*
 function incrementCount(ids, cb){
   commons.read(ids, table, (err, before) => {
     if (err) {
@@ -58,14 +60,25 @@ function incrementCount(ids, cb){
     });
   });
 }
+*/
 
-function read(id, cb) {
-  commons.read(id, table, cb);
+function read(ids, cb) {
+  commons.read(ids, table, cb);
+}
+
+function getVoteCounts(answerList, cb){
+  votes.sumCount(answerList, (err, answerListWithCount) => {
+    if (err) {
+      console.log('failed on answers.getVoteCount. err: ', err);
+      return cb(err);
+    }
+    return cb(null, answerListWithCount);
+  });
 }
 
 module.exports = {
   create: create,
   findByParentId: findByParentId,
   read: read,
-  incrementCount: incrementCount,
+  getVoteCounts: getVoteCounts,
 };

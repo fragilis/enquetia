@@ -32,13 +32,13 @@ function latest(token, cb) {
 }
 
 function create(vote, cb){
-  let irregularFlag = false;
-  vote.answer_ids.forEach(answer_id => {
-    if(isNaN(answer_id)) irregularFlag = true;
-  });
-  if(vote.answer_ids === null || vote.answer_ids.length === 0 || irregularFlag){
+  if(vote == null || vote.answer_ids == null || vote.answer_ids.length === 0){
     return cb(null, vote);
   }
+  vote.answer_ids.forEach(answer_id => {
+    if(isNaN(answer_id)) return cb(null, vote);
+  });
+
   questions.read(vote.question_id, (err) => {
     if (err) {
       console.log('ERROR: failed to read question with id: ', vote.question_id);
@@ -69,26 +69,43 @@ function create(vote, cb){
           console.log('ERROR: failed to save entity: ', entity);
           return cb(err, null);
         }
-        questions.incrementCount(vote.question_id, err => {
-          if (err) {
-            console.log('ERROR: failed to update questions.count');
-            return cb(err, null);
-          }
-          answers.incrementCount(vote.answer_ids, err => {
-            if (err) {
-              console.log('ERROR: failed to update answers.count');
-              return cb(err, null);
-            }
-            vote.id = entity.key.id;
-            return cb(null, vote);
-          });
-        });
+        vote.id = entity.key.id;
+        return cb(null, vote);
       });
     });
   });
 }
 
+function sumCount(answerList, cb){
+  if(answerList == null || !(answerList instanceof Array) || answerList.length === 0) {
+    const err = {
+      code: 400,
+      message: 'Bad request',
+    };
+    return cb(err);
+  }
+
+  const q = ds
+    .createQuery([table])
+    .filter('question_id', answerList[0].question_id);
+
+  ds.runQuery(q, (err, votes, nextQuery) => {
+    if (err) {
+      return cb(err);
+    }
+    votes.forEach(vote => {
+      vote.answer_ids.each(answer_id => {
+        if(answerList.filter(answer => answer.id === answer_id).length > 0) {
+          answerList.filter(answer => answer.id === answer_id)[0].count++;
+        }
+      });
+    });
+    return cb(null, answerList);
+  });
+}
+
 module.exports = {
   latest: latest,
-  create: create
+  create: create,
+  sumCount: sumCount,
 };

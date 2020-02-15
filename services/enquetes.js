@@ -39,7 +39,7 @@ function setVoteValues(body){
     finger_print: '',
     created_at: new Date()
   };
-  return vite;
+  return vote;
 }
 
 function setConditions(question, cookie){

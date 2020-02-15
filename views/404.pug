@@ -1,1 +1,17 @@
-404
+extends ./base.pug
+
+block content
+  .container
+    .row
+      .col-md-12
+        .error-template
+          h1 404 Not Found
+          .error-details.mt-3.mb-4
+            | リクエストされたページが見つかりませんでした。<br />
+          .error-actions
+            a.btn.btn-primary(href="/")
+              i.fas.fa-home.mr-2
+              | ホームに戻る
+            a.btn.btn-secondary(href="#")
+              i.fas.fa-envelope.mr-2
+              | 問い合わせる

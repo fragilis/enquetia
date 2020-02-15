@@ -27,6 +27,7 @@ html(lang="jp")
     meta(name="copyright", content="Copyright &amp;copy; Enquetia All right reserved.")
     meta(content='on', http-equiv='x-dns-prefetch-control')
     link(rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css")
+    link(rel="stylesheet" type="text/css" href="/css/enquetia.css")
   body
     nav.navbar.navbar-light.bg-light
       a.navbar-brand(href="/") Enquetia
@@ -43,24 +44,25 @@ html(lang="jp")
           a(href=logout) ログアウト
         else
           a(href=login) ログイン
-    if messages.info
-      .alert.alert-info.alert-dismissible.fade.show.mb-0
-        strong Info:
-        span.ml-2= messages.info
-        button.close(type="button", data-dismiss="alert", aria-label="Close")
-          span(aria-hidden="true") &times;
-    if messages.warn
-      .alert.alert-warning.alert-dismissible.fade.show.mb-0
-        strong Warning:
-        span.ml-2= messages.warn
-        button.close(type="button", data-dismiss="alert", aria-label="Close")
-          span(aria-hidden="true") &times;
-    if messages.error
-      .alert.alert-danger.alert-dismissible.fade.show.mb-0
-        strong Error:
-        span.ml-2= messages.error
-        button.close(type="button", data-dismiss="alert", aria-label="Close")
-          span(aria-hidden="true") &times;
+    if messages != null
+      if messages.info
+        .alert.alert-info.alert-dismissible.fade.show.mb-0
+          strong Info:
+          span.ml-2= messages.info
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden="true") &times;
+      if messages.warn
+        .alert.alert-warning.alert-dismissible.fade.show.mb-0
+          strong Warning:
+          span.ml-2= messages.warn
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden="true") &times;
+      if messages.error
+        .alert.alert-danger.alert-dismissible.fade.show.mb-0
+          strong Error:
+          span.ml-2= messages.error
+          button.close(type="button", data-dismiss="alert", aria-label="Close")
+            span(aria-hidden="true") &times;
     .container.mt-4
       block content
     script(src="https://code.jquery.com/jquery-3.4.1.slim.min.js", integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=", crossorigin="anonymous")
