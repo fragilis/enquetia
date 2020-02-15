@@ -122,10 +122,43 @@ function incrementCount(id, cb){
 }
 */
 
+function vote(vote, cb){
+  if(vote == null || vote.answer_ids == null || vote.answer_ids.length === 0){
+    return cb(null, vote);
+  }
+  vote.answer_ids.forEach(answer_id => {
+    if(isNaN(answer_id)) return cb(null, vote);
+  });
+
+  read(vote.question_id, (err) => {
+    if (err) {
+      console.log('ERROR: failed to read question with id: ', vote.question_id);
+      console.log('ERROR: ', err);
+      return cb(err, null);
+    }
+    answers.read(vote.answer_ids, (err, entities) => {
+      if(err){
+        console.log('ERROR: failed to read answer with ids: ', vote.answer_ids);
+        console.log('ERROR: ', err);
+        return cb(err, null);
+      } else if (entities.length != vote.answer_ids.length){
+        console.log('ERROR: entities.length != vote.answer_ids.length with answer_ids: ', vote.answer_ids);
+        err = {
+          code: 404,
+          message: 'Not found',
+        };
+        return cb(err, null);
+      }
+      return votes.create(vote, cb);
+    });
+  });
+}
+
 module.exports = {
   read: read,
   findById: findById,
   create: create,
   latest: latest,
   popular: popular,
+  vote: vote,
 };

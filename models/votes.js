@@ -4,8 +4,6 @@ const {Datastore} = require('@google-cloud/datastore');
 const ds = new Datastore();
 const table = 'Votes';
 const commons = require('./common_methods');
-const answers = require('./answers');
-const questions = require('./questions');
 const excludeFromIndexes = ['answer_ids'];
 
 function latest(token, cb) {
@@ -32,47 +30,19 @@ function latest(token, cb) {
 }
 
 function create(vote, cb){
-  if(vote == null || vote.answer_ids == null || vote.answer_ids.length === 0){
-    return cb(null, vote);
-  }
-  vote.answer_ids.forEach(answer_id => {
-    if(isNaN(answer_id)) return cb(null, vote);
-  });
+  const key = ds.key(table);
+  const entity = {
+    key: key,
+    data: commons.toDatastore(vote, excludeFromIndexes),
+  };
 
-  questions.read(vote.question_id, (err) => {
+  ds.save(entity, err => {
     if (err) {
-      console.log('ERROR: failed to read question with id: ', vote.question_id);
-      console.log('ERROR: ', err);
+      console.log('ERROR: failed to save entity: ', entity);
       return cb(err, null);
     }
-    answers.read(vote.answer_ids, (err, entities) => {
-      if(err){
-        console.log('ERROR: failed to read answer with ids: ', vote.answer_ids);
-        console.log('ERROR: ', err);
-        return cb(err, null);
-      } else if (entities.length != vote.answer_ids.length){
-        console.log('ERROR: entities.length != vote.answer_ids.length with answer_ids: ', vote.answer_ids);
-        err = {
-          code: 404,
-          message: 'Not found',
-        };
-        return cb(err, null);
-      }
-      const key = ds.key(table);
-      const entity = {
-        key: key,
-        data: commons.toDatastore(vote, excludeFromIndexes),
-      };
-
-      ds.save(entity, err => {
-        if (err) {
-          console.log('ERROR: failed to save entity: ', entity);
-          return cb(err, null);
-        }
-        vote.id = entity.key.id;
-        return cb(null, vote);
-      });
-    });
+    vote.id = entity.key.id;
+    return cb(null, vote);
   });
 }
 
@@ -87,16 +57,15 @@ function sumCount(answerList, cb){
 
   const q = ds
     .createQuery([table])
-    .filter('question_id', answerList[0].question_id);
-
+    .filter('question_id', Number(answerList[0].question_id));
   ds.runQuery(q, (err, votes, nextQuery) => {
     if (err) {
       return cb(err);
     }
     votes.forEach(vote => {
-      vote.answer_ids.each(answer_id => {
-        if(answerList.filter(answer => answer.id === answer_id).length > 0) {
-          answerList.filter(answer => answer.id === answer_id)[0].count++;
+      vote.answer_ids.forEach(answer_id => {
+        if(answerList.filter(answer => answer.id == answer_id).length > 0) {
+          answerList.filter(answer => answer.id == answer_id)[0].count++;
         }
       });
     });

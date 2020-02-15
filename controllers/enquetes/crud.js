@@ -186,7 +186,7 @@ router.post('/:question_id', (req, res, next) => {
   const vote = services.setVoteValues(req.body);
 
   // 投票結果をDBに保存
-  models.votes.create(vote, (err, savedData) => {
+  models.questions.vote(vote, (err, savedData) => {
     if (err) {
       console.log('err: ', err);
       req.flash('error', '投票に失敗しました。時間を空けて再度お試しください。');
@@ -195,7 +195,7 @@ router.post('/:question_id', (req, res, next) => {
     const expired_at = new Date(parseInt(req.body.question_id, 10));
     res.cookie(req.body.question_id, '1', {expires: expired_at, httpOnly: true, sameSite: 'Lax'});
     req.flash('info', '投票に成功しました。');
-    res.redirect(`${req.baseUrl}/${req.url}/result`);
+    res.redirect(`${req.url}/result`);
   });
 });
 
@@ -211,6 +211,9 @@ router.get('/:question_id/result', (req, res, next) => {
       console.log('failed to find question. err: ', err);
       req.flash('error', '投票結果の取得に失敗しました。時間を空けて再度お試しください。');
     }
+    question.count = question.answers.reduce((acc, cur) => {
+      return acc + cur.result;
+    }, 0);
     res.render('enquetes/result.pug', {
       question: question,
     });
