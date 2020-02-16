@@ -7,8 +7,9 @@ block content
       each question in topics
         li.list-group-item
           a(href=`/${question.id}`)
-            p= question.content
-          p= question.hashtags
+            span= question.title
+          if question.hashtags !== undefined && question.hashtags !== ''
+            span= question.hashtags
     if !topics.length
       p アンケートはありません。
 
