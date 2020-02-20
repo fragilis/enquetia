@@ -39,29 +39,6 @@ function findByParentId(question_id, cb) {
   });
 }
 
-/*
-function incrementCount(ids, cb){
-  commons.read(ids, table, (err, before) => {
-    if (err) {
-      console.log('failed to read answers. err: ', err);
-      return cb(err);
-    }
-    const before_array = before instanceof Array ? before : [before];
-    before_array.forEach(before => {
-      before.id = undefined;
-      before.count++;
-    });
-    commons.update(ids, before_array, excludeFromIndexes, table, (err, after_array) => {
-      if (err) {
-        console.log('failed to update answers. err: ', err);
-        return cb(err);
-      }
-      return cb(null, after_array);
-    });
-  });
-}
-*/
-
 function read(ids, cb) {
   commons.read(ids, table, cb);
 }
@@ -76,9 +53,14 @@ function getVoteCounts(answerList, cb){
   });
 }
 
+function update(ids, data, cb){
+  return commons.update(ids, data, excludeFromIndexes, table, cb);
+}
+
 module.exports = {
   create: create,
   findByParentId: findByParentId,
   read: read,
   getVoteCounts: getVoteCounts,
+  update: update,
 };

@@ -55,14 +55,6 @@ function read(ids, table, cb) {
   const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
   if(keys.length > 0){
     ds.get(keys, (err, entities) => {
-      /*
-      if (!err && !entities) {
-        err = {
-          code: 404,
-          message: 'Not found',
-        };
-      }
-      */
       if (err) {
         console.log('err: ', err)
         return cb(err);
@@ -75,9 +67,10 @@ function read(ids, table, cb) {
   }
 }
 
-function _delete(id, table, cb) {
-  const key = ds.key([table, parseInt(id, 10)]);
-  ds.delete(key, cb);
+function _delete(ids, table, cb) {
+  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
+  const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
+  return ds.delete(keys, cb);
 }
 
 module.exports = {

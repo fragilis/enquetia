@@ -29,11 +29,13 @@ const flash = require('express-flash');
 const session = require('express-session');
 const passport = require('passport');
 const path = require('path');
+const schedule = require('node-schedule');
 
 const {Datastore} = require('@google-cloud/datastore');
 const DatastoreStore = require('@google-cloud/connect-datastore')(session);
 
 const config = require('./config');
+const cron = require('./cron');
 const logging = require('./lib/logging');
 
 const app = express();
@@ -60,6 +62,10 @@ const sessionConfig = {
     kind: 'express-sessions',
   }),
 };
+
+const j = schedule.scheduleJob('4 * * *', function() {
+  cron.refreshVotes();
+});
 
 app.use(session(sessionConfig));
 app.use(express.static('public'));

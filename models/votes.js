@@ -73,8 +73,29 @@ function sumCount(answerList, cb){
   });
 }
 
+/**
+ * 1日以上前の投票を取得
+ */
+function readOld(cb){
+  const q = ds.createQuery(table)
+    .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
+  ds.runQuery(q, (err, votes, nextQuery) => {
+    if (err) {
+      console.log("ERROR: ", err);
+      return cb(err);
+    }
+    return cb(null, votes);
+  });
+}
+
+function _delete(ids, cb){
+  return commons._delete(ids, table, cb);
+}
+
 module.exports = {
   latest: latest,
   create: create,
   sumCount: sumCount,
+  readOld: readOld,
+  _delete: _delete,
 };

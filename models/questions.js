@@ -102,26 +102,6 @@ function findById (ids, cb) {
   });
 }
 
-/*
-function incrementCount(id, cb){
-  commons.read(id, table, (err, [before]) => {
-    if (err) {
-      console.log('failed to read question. err: ', err);
-      return cb(err);
-    }
-    before.id = undefined;
-    before.count++;
-    commons.update(id, before, excludeFromIndexes, table, (err, after) => {
-      if (err) {
-        console.log('failed to update question. err: ', err);
-        return cb(err);
-      }
-      return cb(null, after);
-    });
-  });
-}
-*/
-
 function vote(vote, cb){
   if(vote == null || vote.answer_ids == null || vote.answer_ids.length === 0){
     return cb(null, vote);
@@ -154,6 +134,10 @@ function vote(vote, cb){
   });
 }
 
+function update(ids, data, cb){
+  return commons.update(ids, data, excludeFromIndexes, table, cb);
+}
+
 module.exports = {
   read: read,
   findById: findById,
@@ -161,4 +145,5 @@ module.exports = {
   latest: latest,
   popular: popular,
   vote: vote,
+  update: update,
 };
