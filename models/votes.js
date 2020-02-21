@@ -77,6 +77,7 @@ function sumCount(answerList, cb){
  * 1日以上前の投票を取得
  */
 function readOld(cb){
+  const now = new Date();
   const q = ds.createQuery(table)
     .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
   ds.runQuery(q, (err, votes, nextQuery) => {
@@ -84,7 +85,7 @@ function readOld(cb){
       console.log("ERROR: ", err);
       return cb(err);
     }
-    return cb(null, votes);
+    return cb(null, votes.map(commons.fromDatastore));
   });
 }
 

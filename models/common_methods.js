@@ -4,7 +4,7 @@ const {Datastore} = require('@google-cloud/datastore');
 const ds = new Datastore();
 
 function fromDatastore(obj) {
-  obj.id = obj[Datastore.KEY].id;
+  obj.id = parseInt(obj[Datastore.KEY].id);
   return obj;
 }
 

@@ -63,7 +63,7 @@ const sessionConfig = {
   }),
 };
 
-const j = schedule.scheduleJob('4 * * *', function() {
+const j = schedule.scheduleJob('*/10 * * * *', function() {
   cron.refreshVotes();
 });
 
