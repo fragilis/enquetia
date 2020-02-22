@@ -40,13 +40,13 @@ function refreshVotes(){
         }
 
         // questions.countの更新、answers.countの更新、votesの削除の3つを同じtransactionで行う
-        const transaction = ds.transaction();
-        transaction.run((err) => {
-          if (err) {
-            console.log("ERROR: ", err);
-            return;
-          }
-          transaction.save(q_entities.map(question => {
+        q_entities.forEach(question => {
+          const transaction = ds.transaction();
+          transaction.run((err) => {
+            if (err) {
+              console.log("ERROR: ", err);
+              return;
+            }
             const key = ds.key(['Questions', ds.int(question.id)]);
             question.count += questions.filter(q => q.id == question.id)[0].count;
             question.id = undefined;
@@ -55,35 +55,35 @@ function refreshVotes(){
               key: key,
               data: question
             };
-            return entity;
-          }));
-          transaction.save(a_entities.map(answer => {
-            const key = ds.key(['Answers', ds.int(answer.id)]);
-            answer.count += answers.filter(a => a.id == answer.id)[0].count;
-            answer.id = undefined;
+            transaction.save(question);
+            transaction.save(a_entities.filter(a => a.question_id == question.id).map(answer => {
+              const key = ds.key(['Answers', ds.int(answer.id)]);
+              answer.count += answers.filter(a => a.id == answer.id)[0].count;
+              answer.id = undefined;
 
-            const entity = {
-              key: key,
-              data: answer
-            };
-            return entity;
-          }));
+              const entity = {
+                key: key,
+                data: answer
+              };
+              return entity;
+            }));
 
-          transaction.commit((err)=> {
-            if(!err){
-              models.votes._delete(votes.map(vote => vote.id), (err) => {
-                if (err) {
-                  console.log("count was updated, however, votes have not been deleted.");
-                  console.log("ERROR: ", err);
+            transaction.commit((err)=> {
+              if(!err){
+                models.votes._delete(votes.filter(v => v.question_id = question.id).map(vote => vote.id), (err) => {
+                  if (err) {
+                    console.log("count was updated, however, votes have not been deleted.");
+                    console.log("ERROR: ", err);
+                    return;
+                  }
+                  console.log('refreshVotes() succeeded.');
                   return;
-                }
-                console.log('refreshVotes() succeeded.');
+                });
+              } else {
+                console.log("ERROR: ", err);
                 return;
-              });
-            } else {
-              console.log("ERROR: ", err);
-              return;
-            }
+              }
+            });
           });
         });
       });
