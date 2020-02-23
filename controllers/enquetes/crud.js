@@ -190,7 +190,7 @@ router.get('/:question_id', (req, res, next) => {
       req.flash('error', 'アンケートの取得に失敗しました。');
       res.render('enquetes/view.pug');
     }
-    const questionWithConditions = services.setConditions(question, req.cookies[req.params.question]);
+    const questionWithConditions = services.setConditions(question, req.cookies[req.params.question_id]);
 
     res.render('enquetes/view.pug', {
       question: questionWithConditions,
