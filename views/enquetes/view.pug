@@ -5,7 +5,9 @@ block content
   if question
     form.needs-validation(method="POST", novalidate)
       .card
-        .card-header #{question.title}
+        .card-header.clearfix #{question.title}
+          a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
+            img(src="img/twitter_icon.png", width="30", height="30", alt="twitterに投稿", title="twitterに投稿")
         .card-body
           unless question.description === undefined || question.description === ''
             p.card-text #{question.description}
@@ -46,8 +48,7 @@ block content
 
           p.card-text.clearfix
             small.text-muted #{question.count}票 #{time_left} #{publish_status} 
-              if question.is_expired || question.is_voted
-                a#checkResult 結果を見る
+              a#checkResult 結果を見る
             button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
 
 block script
