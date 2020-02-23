@@ -16,11 +16,11 @@ block content
           p.card-text
             input.form-control-plaintext(type="text", name="description", id="description", value=question.description, readonly)
         unless question.hashtags === undefined || question.hashtags === ''
-        - hashtags = question.hashtags.split(' ')
-        p.card-text
-          each hash, index in hashtags
-            input.form-control(type="hidden", name="hashtags[]", id="hashtag"+index, value=hash)
-            a(href="/", class="mr-1") ##{hash}
+          - hashtags = question.hashtags.split(' ')
+          p.card-text
+            each hash, index in hashtags
+              input.form-control(type="hidden", name="hashtags[]", id="hashtag"+index, value=hash)
+              a(href="/", class="mr-1") ##{hash}
         unless question.answers === undefined
           each answer, index in question.answers
             input.form-control(type="hidden", name="answers[]", id="answer"+index, value=answer)
