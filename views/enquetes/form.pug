@@ -10,7 +10,7 @@ block content
       .invalid-feedback 400文字以内で入力してください。
     .form-group
       label(for="description") 詳細
-      textarea.form-control(name="description", id="description", value=question.description, rows="3", maxlength="1000")
+      textarea.form-control(name="description", id="description", value=question.description, rows="3", maxlength="1000")= question.description
       .invalid-feedback 1000文字以内で入力してください。
     .form-group.clearfix#items
       label(for="answer") 回答
