@@ -28,12 +28,15 @@ html(lang="jp")
     meta(content='on', http-equiv='x-dns-prefetch-control')
     link(rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css")
     link(rel="stylesheet" type="text/css" href="/css/enquetia.css")
+    link(rel="icon", type="image/png", href="/img/favicon.png")
   body
-    nav.navbar.navbar-light.bg-light
-      a.navbar-brand(href="/") Enquetia
-      ul.navbar-nav.mr-auto
+    nav.navbar.navbar-light(style="background-color: #e3f2fd;")
+      a.navbar-brand(href="/")
+        img.d-inline-block.align-top.mr-1(src="/img/logo.png", width="40", height="40")
+        | Enquetia
+      ul.navbar-nav.mr-auto.ml-3
         li.nav-item
-          a.btn.btn-sm.btn-outline-primary(href="/add") アンケートを作る
+          a.btn.btn-outline-primary(href="/add") アンケートを作る
       span.navbar-text.navbar-right
         if profile
           a(href="/mine" title="マイページに移動")
