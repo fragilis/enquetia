@@ -66,7 +66,6 @@ router.get('/add', (req, res) => {
   req.session.question = null;
 
   passedVariable.MAX_ITEM_COUNT = config.get('MAX_ITEM_COUNT');
-  console.log('passedVariable:',passedVariable)
   res.render('enquetes/form.pug', {
     question: passedVariable,
     action: 'アンケートの作成',
@@ -117,6 +116,29 @@ router.get('/confirm', csrfProtection, (req, res, next) => {
     csrfToken: req.csrfToken()
   });
 });
+
+
+/**
+ * POST /confirm
+ *
+ * 確認画面で押されたボタンで分岐
+ * 修正ボタンの場合は入力画面に戻る
+ * 作成ボタンの場合は次のルーティングに移動
+ * それ以外の場合は次のエラー処理
+ */
+router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
+  (req, res, next) => {
+    if(req.body.modify != null) res.redirect(`${req.baseUrl}/add`);
+    else if (req.body.create != null) return next('route');
+    else{
+      const err = {
+        code: 400,
+        message: 'Bad request',
+      };
+      return next(err);
+    }
+  }
+);
 
 
 /**
