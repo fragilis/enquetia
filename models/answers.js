@@ -10,7 +10,7 @@ const votes = require('./votes');
 function create(answers, question_id, cb){
   const answers_array = answers instanceof Array ? answers : [answers];
   const entities = answers_array.map((answer, index) => {
-    answer.question_id = question_id;
+    answer.question_id = parseInt(question_id);
     answer.sort_order = index;
     const key = ds.key(table);
     const entity = {
