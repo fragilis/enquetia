@@ -65,9 +65,9 @@ router.get('/add', (req, res) => {
   const passedVariable = req.session.question != undefined ? req.session.question : {};
   req.session.question = null;
 
-  passedVariable.MAX_ITEM_COUNT = config.get('MAX_ITEM_COUNT');
   res.render('enquetes/form.pug', {
     question: passedVariable,
+    maxItemCount: config.get('MAX_ITEM_COUNT'),
     action: 'アンケートの作成',
   });
 });

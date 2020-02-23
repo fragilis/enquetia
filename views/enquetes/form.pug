@@ -17,7 +17,7 @@ block content
       span.badge.badge-pill.badge-danger 必須
       i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="選択肢を入力します。「選択肢を追加」ボタンを押すと最大8個まで選択肢を増やすことができます。不要な選択肢は入力欄右側の×ボタンで削除できます。")
       button.btn.btn-primary.mt-n2.float-right#add_item(type="button") 選択肢を追加
-      .invalid-feedback 選択肢は10個までです。
+      span(style="color:red;") ※選択肢は#{maxItemCount}個までです。
     .form-group
       label(for="answer_type") 回答形式
       span.badge.badge-pill.badge-danger 必須
@@ -55,4 +55,4 @@ block content
     button.btn.btn-success.float-right.mt-2(type="submit") 入力内容を確認
 
 block script
-  script(type='text/javascript', src='/js/form.js', id='question', data-json=JSON.stringify(question))
+  script(type='text/javascript', src='/js/form.js', id='question', data-json=JSON.stringify({question: question, maxItemCount: maxItemCount}))

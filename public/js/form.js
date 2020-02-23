@@ -15,12 +15,11 @@ $(function () {
 
   const $question = $('#question').data('json');
   $('#items').children('.input-group').remove();
-  if($question.answers != undefined && $question.answers.length > 0){
-    $question.answers.forEach((e, i) => {
+  if($question.question.answers != undefined && $question.question.answers.length > 0){
+    $question.question.answers.forEach((e, i) => {
       add_item(i+1, e);
     });
   }else{
-    console.log('$question.answers is empty.');
     add_item(1, '');
   }
 })
@@ -38,8 +37,8 @@ function delete_item(num){
 }
 
 function add_item(num, answer){
-  const $question = $('#question').data('json');
-  if(num > $question.MAX_ITEM_COUNT){
+  const $maxItemCount = $('#question').data('json').maxItemCount;
+  if(num > $maxItemCount){
     // TODO: show error message
   }
   else{
