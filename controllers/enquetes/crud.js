@@ -113,6 +113,7 @@ router.get('/confirm', csrfProtection, (req, res, next) => {
 
   res.render('enquetes/confirm.pug', {
     question: passedVariable,
+    action: '確認画面',
     csrfToken: req.csrfToken()
   });
 });
@@ -193,6 +194,7 @@ router.get('/:question_id', (req, res, next) => {
     const questionWithConditions = services.setConditions(question, req.cookies[req.params.question_id]);
 
     res.render('enquetes/view.pug', {
+      action: 'アンケート投票',
       question: questionWithConditions,
     });
   });
@@ -237,6 +239,7 @@ router.get('/:question_id/result', (req, res, next) => {
       return acc + cur.result;
     }, 0);
     res.render('enquetes/result.pug', {
+      action: 'アンケート結果',
       question: question,
     });
   });
