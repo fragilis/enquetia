@@ -86,12 +86,12 @@ router.post('/add', validation.checkQuestion,
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       req.session.question = req.body;
-      res.redirect(`${req.baseUrl}/add`);
+      return res.redirect(`${req.baseUrl}/add`);
     }
 
     // 確認画面にリダイレクト
     req.session.question = req.body;
-    res.redirect(`${req.baseUrl}/confirm`);
+    return res.redirect(`${req.baseUrl}/confirm`);
   }
 );
 
@@ -102,11 +102,11 @@ router.post('/add', validation.checkQuestion,
  * 入力内容確認画面を表示
  */
 router.get('/confirm', csrfProtection, (req, res, next) => {
-  const passedVariable = req.session.question != undefined ? req.session.question : {};
-  if(passedVariable === undefined){
+  const passedVariable = req.session.question != undefined ? req.session.question : undefined;
+  if(passedVariable === undefined || !Object.keys(passedVariable).length){
     req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
     req.session.question = req.body;
-    res.redirect(`${req.baseUrl}/confirm`);
+    return res.redirect(`${req.baseUrl}/add`);
   }
 
   if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で変更・削除できません。');
@@ -154,7 +154,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       req.session.question = req.body;
-      res.redirect(`${req.baseUrl}/add`);
+      return res.redirect(`${req.baseUrl}/add`);
     }
 
     // formの値をquestionとanswersに格納
@@ -166,13 +166,13 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
         req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
         console.log('err: ', err);
         req.session.question = req.body;
-        res.redirect(`${req.baseUrl}/confirm`);
+        return res.redirect(`${req.baseUrl}/confirm`);
       }
       req.flash('info', 'アンケートが作成されました。');
       if (req.user) {
-        res.redirect(`${req.baseUrl}/mypage`);
+        return res.redirect(`${req.baseUrl}/mypage`);
       } else {
-        res.redirect(`${req.baseUrl}/`);
+        return res.redirect(`${req.baseUrl}/`);
       }
     });
   }
@@ -212,12 +212,12 @@ router.post('/:question_id', (req, res, next) => {
     if (err) {
       console.log('err: ', err);
       req.flash('error', '投票に失敗しました。時間を空けて再度お試しください。');
-      res.redirect(`${req.baseUrl}/${req.url}`);
+      return res.redirect(`${req.baseUrl}/${req.url}`);
     }
     const expired_at = new Date(parseInt(req.body.question_id, 10));
     res.cookie(req.body.question_id, '1', {expires: expired_at, httpOnly: true, sameSite: 'Lax'});
     req.flash('info', '投票に成功しました。');
-    res.redirect(`${req.url}/result`);
+    return res.redirect(`${req.url}/result`);
   });
 });
 
@@ -287,7 +287,7 @@ router.post(
         next(err);
         return;
       }
-      res.redirect(`${req.baseUrl}/${savedData.id}`);
+      return res.redirect(`${req.baseUrl}/${savedData.id}`);
     });
   }
 );
@@ -303,7 +303,7 @@ router.get('/:question/delete', (req, res, next) => {
       next(err);
       return;
     }
-    res.redirect(req.baseUrl);
+    return res.redirect(req.baseUrl);
   });
 });
 
