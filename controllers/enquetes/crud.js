@@ -128,7 +128,7 @@ router.get('/confirm', csrfProtection, (req, res, next) => {
  */
 router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
   (req, res, next) => {
-    if(req.body.modify != null) res.redirect(`${req.baseUrl}/add`);
+    if(req.body.modify != null) return res.redirect(`${req.baseUrl}/add`);
     else if (req.body.create != null) return next('route');
     else{
       const err = {
