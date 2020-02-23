@@ -18,7 +18,8 @@ block content
         unless question.hashtags === undefined || question.hashtags === ''
         - hashtags = question.hashtags.split(' ')
         p.card-text
-          each hash in hashtags
+          each hash, index in hashtags
+            input.form-control(type="hidden", name="hashtags[]", id="hashtag"+index, value=hash)
             a(href="/", class="mr-1") ##{hash}
         unless question.answers === undefined
           each answer, index in question.answers
