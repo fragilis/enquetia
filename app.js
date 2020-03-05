@@ -26,8 +26,11 @@ const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
 const express = require('express');
 const flash = require('express-flash');
+const oauth = require('./lib/oauth')
 const session = require('express-session');
-const passport = require('passport');
+//const passport = require('passport')
+//  , TwitterStrategy = require('passport-twitter').Strategy;
+const passport = oauth.passport;
 const path = require('path');
 const schedule = require('node-schedule');
 
@@ -70,10 +73,10 @@ const j = schedule.scheduleJob('*/10 * * * *', function() {
 app.use(session(sessionConfig));
 app.use(express.static('public'));
 
-// OAuth2
+// OAuth
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(require('./lib/oauth2').router);
+//app.use(oauth.router);
 
 // parse application/x-www-form-urlencoded 
 app.use(bodyParser.urlencoded({
