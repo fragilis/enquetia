@@ -76,7 +76,7 @@ app.use(express.static('public'));
 // OAuth
 app.use(passport.initialize());
 app.use(passport.session());
-//app.use(oauth.router);
+app.use(oauth.router);
 
 // parse application/x-www-form-urlencoded 
 app.use(bodyParser.urlencoded({
