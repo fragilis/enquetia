@@ -1,5 +1,13 @@
 extends ../base.pug
 
+block head
+  meta(name="description", content="アンケートの作成画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大10個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(property="og:type", content="website")
+  meta(property="og:title", content="アンケート作成画面 | Enquetia (アンケティア) - みんなでアンケしよう！")
+  meta(property="og:description", content="アンケートの作成画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大10個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(property="og:image", content="https://enquetia.net/img/logo.png")
+  meta(property="og:image:alt", content="enquetia")
+
 block content
   h3 #{action}
   form.needs-validation(method="POST", novalidate)

@@ -1,5 +1,13 @@
 extends ../base.pug
 
+block head
+  meta(name="description", content="「" + question.title + "」の気になる投票結果はこちら！ぜひチェックしてみてください！")
+  meta(property="og:type", content="article")
+  meta(property="og:title", content="「" + question.title + "」投票結果 | Enquetia (アンケティア) - みんなでアンケしよう！")
+  meta(property="og:description", content="「" + question.title + "」の気になる投票結果はこちら！ぜひチェックしてみてください！")
+  meta(property="og:image", content="https://enquetia.net/img/logo.png")
+  meta(property="og:image:alt", content="enquetia")
+
 block content
   h3 #{action}
   form.needs-validation(method="POST", novalidate)

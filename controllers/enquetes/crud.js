@@ -45,6 +45,7 @@ router.get('/', (req, res, next) => {
         return next('route');
       }
       return res.render('enquetes/list.pug', {
+        url: req.url,
         topics: topics,
         news: news,
         newsCursor: newsCursor,
@@ -69,6 +70,7 @@ router.get('/add', (req, res) => {
   req.session.question = null;
 
   res.render('enquetes/form.pug', {
+    url: req.url,
     question: passedVariable,
     maxItemCount: config.get('MAX_ITEM_COUNT'),
     action: 'アンケートの作成',
@@ -115,6 +117,7 @@ router.get('/confirm', csrfProtection, (req, res, next) => {
   if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で変更・削除できません。');
 
   res.render('enquetes/confirm.pug', {
+    url: req.url,
     question: passedVariable,
     action: '確認画面',
     csrfToken: req.csrfToken()
@@ -197,6 +200,7 @@ router.get('/:question_id', (req, res, next) => {
     const questionWithConditions = services.setConditions(question, req.cookies[req.params.question_id]);
 
     res.render('enquetes/view.pug', {
+      url: req.url,
       action: 'アンケート投票',
       question: questionWithConditions,
     });
@@ -242,6 +246,7 @@ router.get('/:question_id/result', (req, res, next) => {
       return acc + cur.result;
     }, 0);
     res.render('enquetes/result.pug', {
+      url: req.url,
       action: 'アンケート結果',
       question: question,
     });

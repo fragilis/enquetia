@@ -6,47 +6,36 @@ html(lang="jp")
     meta(name="viewport", content="width=device-width, initial-scale=1")
     link(href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T", crossorigin="anonymous")
     link(href="https://use.fontawesome.com/releases/v5.6.1/css/all.css", rel="stylesheet")
-    meta(name="description", content="Enquetia (アンケティア) は、匿名でアンケートする＆アンケートに回答できるサービスです。選択項目は上限なし、チェックボックスにも対応しています。気になることを質問したり答えたり、みんなでアンケしよう！")
     meta(name="keywords", content="質問, アンケート, twitter")
-    link(rel="canonical", href="https://enquietia.appspot.com")
-    meta(name="twitter:title", content="Enquetia (アンケティア) - みんなでアンケしよう！")
-    meta(name="twitter:card", content="summary_large_image")
-    meta(name="twitter:image", content="https://enquietia.appspot.com/images/ogp.png")
-    meta(name="twitter:image:alt", content="enquetia")
-    meta(name="twitter:description", content="Enquetia (アンケティア) は、匿名でアンケートする＆アンケートに回答できるサービスです。選択項目は上限なし、チェックボックスにも対応しています。気になることを質問したり答えたり、みんなでアンケしよう！")
-    meta(name="twitter:url", content="https://enquietia.appspot.com")
+    meta(property="og:url", content="https://enquietia.net" + url)
+    link(rel="canonical", href="https://enquietia.net" + url)
+    meta(name="twitter:card", content="summary")
     meta(name="twitter:site", content="@enquetia")
-    meta(name="twitter:domain", content="enquietia.appspot.com")
-    meta(property="og:title", content="Enquetia (アンケティア) - みんなでアンケしよう！")
-    meta(property="og:url", content="https://enquietia.appspot.com")
-    meta(property="og:image", content="https://enquietia.appspot.com/images/ogp.png")
-    meta(property="og:image:alt", content="enquetia")
-    meta(property="og:description", content="Enquetia (アンケティア) は、匿名でアンケートする＆アンケートに回答できるサービスです。選択項目は上限なし、チェックボックスにも対応しています。気になることを質問したり答えたり、みんなでアンケしよう！")
-    meta(property="og:locale", content="ja_JP")
     meta(name="robots", content="noarchive")
     meta(name="copyright", content="Copyright &amp;copy; Enquetia All right reserved.")
     meta(content='on', http-equiv='x-dns-prefetch-control')
     link(rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css")
     link(rel="stylesheet" type="text/css" href="/css/enquetia.css")
     link(rel="icon", type="image/png", href="/img/favicon.png")
+    block head
   body
     nav.navbar.navbar-light(style="background-color: #e3f2fd;")
       a.navbar-brand(href="/")
-        img.d-inline-block.align-top.mr-1(src="/img/logo.png", width="40", height="40")
+        img.rounded.d-inline-block.align-top.mr-2(src="/img/logo.png", width="40", height="40")
         | Enquetia
       ul.navbar-nav.mr-auto.ml-3
         li.nav-item
           a.btn.btn-outline-primary(href="/add") アンケートを作る
       span.navbar-text.navbar-right
         if profile
-          a(href="/mine" title="マイページに移動")
+          a(href="/mypage" title="マイページに移動")
             if profile.image
-              img.rounded-circle.mr-2(src=profile.image, width=30)
+              img.rounded-circle.mr-2(src=profile.image, width=40)
             else
-              span #{profile.displayName}
+              span #{profile.displayName} &nbsp;
           a(href=logout) ログアウト
         else
-          a(href=login) ログイン
+          a(href=login) Twitterでログイン
     if messages != null
       if messages.info
         .alert.alert-info.alert-dismissible.fade.show.mb-0
