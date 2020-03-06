@@ -1,6 +1,13 @@
 doctype html
 html(lang="jp")
   head
+    script(async, src="https://www.googletagmanager.com/gtag/js?id=UA-159933056-1")
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-159933056-1');
+
     title Enquetia (アンケティア) - みんなでアンケしよう！
     meta(charset='utf-8')
     meta(name="viewport", content="width=device-width, initial-scale=1")
@@ -17,6 +24,7 @@ html(lang="jp")
     link(rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css")
     link(rel="stylesheet" type="text/css" href="/css/enquetia.css")
     link(rel="icon", type="image/png", href="/img/favicon.png")
+    script(data-ad-client="ca-pub-1361953622760947", async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
     block head
   body
     nav.navbar.navbar-light(style="background-color: #e3f2fd;")
