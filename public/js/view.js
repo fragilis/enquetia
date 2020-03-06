@@ -6,8 +6,13 @@ $(function () {
       $(this).addClass('was-validated');
     }
   });
-  $('#checkResult').attr('href', location.href.replace(/\/$/, '') + '/result');
   const $question = $('#question').data('json');
+  let twitter_href = "http://twitter.com/share?";
+  twitter_href += "url=" + location.href;
+  twitter_href += "&text=" + "みなさんの回答お待ちしています！";
+  twitter_href += "&hashtags=Enquetia,アンケティア";
+  $('#twitter').attr('href', twitter_href);
+  $('#checkResult').attr('href', location.href.replace(/\/$/, '') + '/result');
   if(!$question.is_expired){
     window.cookieconsent.initialise({
       "palette": {
