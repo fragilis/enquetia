@@ -19,9 +19,10 @@ block content
           if question.hashtags !== undefined && question.hashtags !== ''
             span= question.hashtags
     if !topics.length
-      p アンケートはありません。
+      p.ml-3.mt-3 アンケートはありません。
 
-  h3 最新アンケート
+  hr.mt-4.mb-4
+  h3.mt-4 最新アンケート
   if news != null
     ul.list-group.list-group-flush
       each question in news
@@ -31,7 +32,7 @@ block content
           if question.hashtags !== undefined && question.hashtags !== ''
             span= question.hashtags
     if !news.length
-      p アンケートはありません。
+      p.ml-5.mt-3 アンケートはありません。
 
   if newsCursor
     nav
