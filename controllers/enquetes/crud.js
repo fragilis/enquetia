@@ -7,6 +7,7 @@ const { validationResult } = require('express-validator');
 const validation = require('../../validation');
 const config = require('../../config');
 const services = require('../../services/enquetes');
+const oauth = require('../../lib/oauth');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const csurf = require('csurf');
@@ -14,6 +15,8 @@ const csurf = require('csurf');
 // setup route middlewares
 const csrfProtection = csurf({ cookie: true });
 const parseForm = bodyParser.urlencoded({ extended: false });
+
+router.use(oauth.template);
 
 // Set Content-Type for all responses for these routes
 router.use((req, res, next) => {
