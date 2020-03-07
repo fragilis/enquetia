@@ -9,4 +9,5 @@ indexes:
   properties:
   - name: publish_status
   - name: published_at
+    direction: desc
   - name: user_id

@@ -22,7 +22,7 @@ function latest(limit, token, cb) {
   const q = ds
     .createQuery([table])
     .filter('publish_status', 1)
-    .order("published_at")
+    .order("published_at", {descending: true})
     .order("user_id")
     .limit(limit)
     .start(token);
