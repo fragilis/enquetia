@@ -39,10 +39,9 @@ function delete_item(num){
 function add_item(num, answer){
   const $maxItemCount = $('#question').data('json').maxItemCount;
   if(num > $maxItemCount){
-    // TODO: show error message
   }
   else{
     $add_item = $('#add_item');
-    $add_item.before('<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">選択肢' + num + '</span></div><input class="form-control" type="text" name="answers[]" id="answer' + num + '" value="' + answer + '" required maxlength="100"><div class="input-group-append"><button class="btn btn-outline-secondary" type="button" title="選択肢を削除" onclick="delete_item(' + num + ')">×</div><div class="invalid-feedback">100文字以内で入力してください。</div></div>');
+    $add_item.before('<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">選択肢' + num + '</span></div><input class="form-control" type="text" name="answers[]" id="answer' + num + '" value="' + answer + '" required maxlength="20"><div class="input-group-append"><button class="btn btn-outline-secondary" type="button" title="選択肢を削除" onclick="delete_item(' + num + ')">×</div><div class="invalid-feedback">20文字以内で入力してください。</div></div>');
   }
 }
