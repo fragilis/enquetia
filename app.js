@@ -60,10 +60,17 @@ const sessionConfig = {
   saveUninitialized: false,
   secret: config.get('SECRET'),
   signed: true,
+  cookie: {
+    httpOnly: true,
+    secure: true,
+    //maxage: 1000*60*60*24
+  }
+  /*
   store: new DatastoreStore({
     dataset: new Datastore(),
     kind: 'express-sessions',
   }),
+  */
 };
 
 const j = schedule.scheduleJob('*/10 * * * *', function() {
