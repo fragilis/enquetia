@@ -177,7 +177,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
         req.session.question = req.body;
         return res.redirect(`${req.baseUrl}/confirm`);
       }
-      services.images.createTwitterCard(savedData, (err) => {
+      services.images.createTwitterCard(savedData, answers, (err) => {
         req.flash('info', 'アンケートが作成されました。');
         if (req.user) {
           return res.redirect(`${req.baseUrl}/mypage`);
