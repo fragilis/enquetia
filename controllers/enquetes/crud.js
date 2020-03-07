@@ -49,6 +49,7 @@ router.get('/', (req, res, next) => {
         topics: topics,
         news: news,
         newsCursor: newsCursor,
+        maxItemCount: config.get('MAX_ITEM_COUNT'),
       });
     });
   });
@@ -120,7 +121,8 @@ router.get('/confirm', csrfProtection, (req, res, next) => {
     url: req.url,
     question: passedVariable,
     action: '確認画面',
-    csrfToken: req.csrfToken()
+    csrfToken: req.csrfToken(),
+    maxItemCount: config.get('MAX_ITEM_COUNT'),
   });
 });
 
@@ -205,6 +207,7 @@ router.get('/:question_id', (req, res, next) => {
       url: req.url,
       action: 'アンケート投票',
       question: questionWithConditions,
+      maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   });
 });
@@ -251,6 +254,7 @@ router.get('/:question_id/result', (req, res, next) => {
       url: req.url,
       action: 'アンケート結果',
       question: question,
+      maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   });
 });
