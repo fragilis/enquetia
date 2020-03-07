@@ -2,6 +2,13 @@ $(function () {
   const ctx = $('#resultChart')[0].getContext("2d");
 
   const $question = $('#question').data('json');
+
+  let twitter_href = "http://twitter.com/share?";
+  twitter_href += "url=" + location.href;
+  twitter_href += "&text=" + "気になるアンケートを見つけました！「" + $question.title + "」";
+  twitter_href += "&hashtags=Enquetia,アンケティア";
+  $('#twitter').attr('href', twitter_href);
+
   const labels = $question.answers.map(answer => answer.value);
   const total = $question.answers.map(answer => answer.result).reduce((acc, cur) => acc + cur);
   //const data = $question.answers.map(answer => answer.result);

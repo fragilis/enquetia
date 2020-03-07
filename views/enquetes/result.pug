@@ -13,7 +13,9 @@ block content
   h3 #{action}
   form.needs-validation(method="POST", novalidate)
     .card
-      .card-header #{question.title}
+      .card-header.clearfix #{question.title}
+        a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
+          img(src="img/twitter_icon.png", width="30", height="30", alt="twitterに投稿", title="twitterに投稿")
       .card-body
         unless question.description === undefined || question.description === ''
           p.card-text #{question.description}
