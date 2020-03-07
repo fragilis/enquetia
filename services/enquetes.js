@@ -1,5 +1,7 @@
 'use strict';
 
+const images = require('./images');
+
 function setEnqueteValues(body, user){
   const question = {
     title: body.title,
@@ -60,4 +62,5 @@ module.exports = {
   setEnqueteValues: setEnqueteValues,
   setVoteValues: setVoteValues,
   setConditions: setConditions,
+  images: images,
 };

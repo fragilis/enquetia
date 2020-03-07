@@ -175,12 +175,14 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
         req.session.question = req.body;
         return res.redirect(`${req.baseUrl}/confirm`);
       }
-      req.flash('info', 'アンケートが作成されました。');
-      if (req.user) {
-        return res.redirect(`${req.baseUrl}/mypage`);
-      } else {
-        return res.redirect(`${req.baseUrl}/`);
-      }
+      services.images.createTwitterCard(savedData, (err) => {
+        req.flash('info', 'アンケートが作成されました。');
+        if (req.user) {
+          return res.redirect(`${req.baseUrl}/mypage`);
+        } else {
+          return res.redirect(`${req.baseUrl}/`);
+        }
+      });
     });
   }
 );
