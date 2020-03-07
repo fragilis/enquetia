@@ -2,9 +2,10 @@ extends ../base.pug
 
 block head
   meta(name="description", content=question.description || "「" + question.title + "」の投票画面です。皆さんの投票をお待ちしています！")
+  meta(name="twitter:card", content="summary_large_image")
   meta(property="og:type", content="article")
-  meta(property="og:title", content="「" + question.title + "」")
-  meta(property="og:description", content=question.description || "「" + question.title + "」の投票画面です。皆さんの投票をお待ちしています！")
+  meta(property="og:title", content="「" + question.title + "」の投票はこちら")
+  meta(property="og:description", content="皆さんの投票をお待ちしています！")
   meta(property="og:image", content="https://storage.cloud.google.com/enquetia/" + question.id + ".png")
   meta(property="og:image:alt", content="enquetia")
 
