@@ -10,30 +10,32 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  h3 #{action}
-  form.needs-validation(method="POST", novalidate)
-    .card
-      .card-header.clearfix #{question.title}
-        a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
-          img(src="img/twitter_icon.png", width="30", height="30", alt="twitterに投稿", title="twitterに投稿")
-      .card-body
-        unless question.description === undefined || question.description === ''
-          p.card-text #{question.description}
-        unless question.hashtags === undefined || question.hashtags === ''
-          p.card-text
-            a #test
-        canvas(id="resultChart")
-        - const year = question.published_at.getFullYear()
-        - const month = question.published_at.getMonth()+1
-        - const date = question.published_at.getDate()
-        - const hours = question.published_at.getHours()
-        - const minutes = question.published_at.getMinutes()
-        - const seconds = question.published_at.getSeconds()
-        p.card-text.clearfix
-          small.text-muted.float-right
-            | 公開日時：#{year}年#{month}月#{date}日 #{hours}:#{minutes}:#{seconds}<br />
-            | 回答期間：#{question.period_hours}時間<br />
-            | 総回答数：#{question.count}票
+  .card.mb-4.bg-info
+    .card-header.bg-light
+      h3.mb-0 #{action}
+    .card-body
+      .card
+        .card-header.clearfix #{question.title}
+          a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
+            img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
+        .card-body
+          unless question.description === undefined || question.description === ''
+            p.card-text #{question.description}
+          unless question.hashtags === undefined || question.hashtags === ''
+            p.card-text
+              a #test
+          canvas(id="resultChart")
+          - const year = question.published_at.getFullYear()
+          - const month = question.published_at.getMonth()+1
+          - const date = question.published_at.getDate()
+          - const hours = question.published_at.getHours()
+          - const minutes = question.published_at.getMinutes()
+          - const seconds = question.published_at.getSeconds()
+          p.card-text.clearfix
+            small.text-muted.float-right
+              | 公開日時：#{year}年#{month}月#{date}日 #{hours}:#{minutes}:#{seconds}<br />
+              | 回答期間：#{question.period_hours}時間<br />
+              | 総回答数：#{question.count}票
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")

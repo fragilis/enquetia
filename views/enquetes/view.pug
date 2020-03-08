@@ -1,4 +1,5 @@
 extends ../base.pug
+include _card
 
 block head
   meta(name="description", content=question.description || "「" + question.title + "」の投票画面です。皆さんの投票をお待ちしています！")
@@ -10,55 +11,12 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  h3 #{action}
-  if question
-    form.needs-validation(method="POST", novalidate)
-      .card
-        .card-header.clearfix #{question.title}
-          a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
-            img(src="img/twitter_icon.png", width="30", height="30", alt="twitterに投稿", title="twitterに投稿")
-        .card-body
-          unless question.description === undefined || question.description === ''
-            p.card-text #{question.description}
-          unless question.hashtags === undefined || question.hashtags === ''
-            p.card-text
-              a #test
-          input.form-control(type="hidden", name="question_id", id="question_id", value=question.id)
-          input.form-control(type="hidden", name="expired_at", id="expired_at", value=question.expired_at)
-          each answer, index in question.answers
-            .form-check.mb-2.ml-5
-              if question.answer_type === "radio" && index === 0
-                input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
-              else
-                input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
-              label.form-check-label(for="answer"+index) #{answer.value}
-              if question.answers.length === index+1
-                .invalid-feedback どれか1つを選択してください。
-
-          - var time_left = " "
-          if question.is_expired
-            - time_left += "受付は終了しました"
-          else if question.is_voted
-            - time_left += "投票済みです"
-          else
-            - time_left += "残り"
-            if question.left_hours > 0
-              if parseInt(question.left_hours/24) > 0
-                - time_left += String(parseInt(question.left_hours/24, 10)) + "日"
-              - time_left += String(parseInt(question.left_hours, 10)%24) + "時間"
-
-          - var publish_status = ""
-          if !question.is_expired
-            - publish_status += " "
-            if question.publish_status === 1
-              - publish_status += "トップページ公開"
-            else if question.publish_status === 2
-              - publish_status += "トップページ非公開"
-
-          p.card-text.clearfix
-            small.text-muted #{question.count}票 #{time_left} #{publish_status} 
-              a#checkResult 結果を見る
-            button.btn.btn-primary.btn-sm.float-right(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
+  .card.mb-4.bg-info
+    .card-header.bg-light
+      h3.mb-0 #{action}
+    .card-body
+      if question
+        +card(question)
 
 block script
   script(type='text/javascript', src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js")

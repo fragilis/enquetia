@@ -1,4 +1,5 @@
 extends ../base.pug
+include _card
 
 block head
   meta(name="description", content="Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
@@ -10,37 +11,32 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  h3.mt-3 今話題のアンケート
-  if topics != null
-    ul.list-group.list-group-flush
-      each question in topics
-        li.list-group-item
-          a(href=`/${question.id}`)
-            span= question.title
-          if question.hashtags !== undefined && question.hashtags !== ''
-            span= question.hashtags
-    if !topics.length
-      p.ml-3.mt-3 アンケートはありません。
+  .d-block.d-sm-none.w-100.p-2.mb-2
+    a.btn.btn-lg.btn-block.btn-primary(href="/add") アンケートを作る
+  .card.mb-4.bg-info
+    .card-header.bg-light(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+      h3.mb-0 最新アンケート
+    .collapse.show#topics
+      .card-body
+        if topics != null && topics.length
+          each question in topics
+            +card(question)
+        else
+          .card
+            .card-body
+              p.card-text.mb-0 アンケートはありません。
 
-  hr.mt-4.mb-4
-  h3.mt-4 最新アンケート
-  if news != null
-    ul.list-group.list-group-flush
-      each question in news
-        li.list-group-item
-          a(href=`/${question.id}`)
-            span= question.title
-          if question.hashtags !== undefined && question.hashtags !== ''
-            span= question.hashtags
-    if !news.length
-      p.ml-3.mt-3 アンケートはありません。
-
-  if newsCursor
-    nav
-      ul.pager
-        li
-          a(href=`?pageToken=${encodeURIComponent(newsCursor)}`) More
-  .fixed-bottom
-    .container.d-block.d-sm-none.w-100.p-2
-      a.btn.btn-lg.btn-block.btn-primary(href="/add") アンケートを作る
+  hr.mb-4
+  .card.mb-5.bg-info
+    .card-header.bg-light(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
+      h3.mb-0 最新アンケート
+    .collapse.show#news
+      .card-body
+        if news != null && news.length
+          each question in news
+            +card(question)
+        else
+          .card
+            .card-body
+              p.card-text.mb-0 アンケートはありません。
 
