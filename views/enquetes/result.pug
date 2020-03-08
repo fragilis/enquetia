@@ -10,6 +10,13 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
+  nav(aria-label="breadcrumb")
+    ol.breadcrumb
+      li.breadcrumb-item
+        a(href="/") Home
+      li.breadcrumb-item
+        a(href="/" + question.id) アンケート投票
+      li.breadcrumb-item.active(aria-current="page") アンケート結果
   .card.mb-4.bg-info
     .card-header.bg-light
       h3.mb-0 #{action}
