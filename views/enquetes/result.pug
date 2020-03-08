@@ -17,6 +17,7 @@ block content
       .card
         .card-header.clearfix #{question.title}
           a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
+          a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
             img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
         .card-body
           unless question.description === undefined || question.description === ''
