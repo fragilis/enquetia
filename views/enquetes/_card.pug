@@ -12,16 +12,18 @@ mixin card(question)
             a #test
         input.form-control(type="hidden", name="question_id", id="question_id", value=question.id)
         input.form-control(type="hidden", name="expired_at", id="expired_at", value=question.expired_at)
-        //-
-          each answer, index in question.answers
-            .form-check.mb-2.ml-5
-              if question.answer_type === "radio" && index === 0
-                input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
-              else
-                input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
-              label.form-check-label(for="answer"+index) #{answer.value}
-              if question.answers.length === index+1
-                .invalid-feedback どれか1つを選択してください。
+
+        fieldset.form-group
+          .row
+            each answer, index in question.answers
+              .form-check.mb-3.pl-5.col-xs-12.col-sm-6
+                if question.answer_type === "radio" && index === 0
+                  input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
+                else
+                  input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
+                label.form-check-label(for="answer"+index) #{answer.content}
+                if question.answers.length === index+1
+                  .invalid-feedback どれか1つを選択してください。
 
         - var time_left = " "
         if question.is_expired
@@ -48,5 +50,5 @@ mixin card(question)
             a.ml-2(href="/" + question.id + "/result") 結果を見る
           button.btn.btn-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
         .clearfix
-          button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
+          button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none.mt-2(type="submit", disabled=question.is_expired || question.is_voted, onclick="($this).prop('disabled', true)") 投票する
 

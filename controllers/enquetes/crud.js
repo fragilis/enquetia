@@ -31,28 +31,20 @@ router.use((req, res, next) => {
  *
  * 人気のアンケートと最新アンケートを一覧表示
  */
-router.get('/', (req, res, next) => {
-  // 人気のアンケートを取得
-  models.questions.popular(req.query.pageToken, (err, topics) => {
-    if (err) {
-      req.flash('error', 'アンケートの取得に失敗しました。');
-      return next('route');
-    }
-    // 最新アンケートを取得
-    models.questions.latest(10, req.query.pageToken, (err, news, newsCursor) => {
-      if (err) {
-        req.flash('error', 'アンケートの取得に失敗しました。');
-        return next('route');
-      }
-      return res.render('enquetes/list.pug', {
-        url: req.url,
-        topics: topics,
-        news: news,
-        newsCursor: newsCursor,
-        maxItemCount: config.get('MAX_ITEM_COUNT'),
-      });
+router.get('/', async (req, res, next) => {
+  try{
+    const topics = await models.questions.popular(req.query.pageToken);
+    const news = await models.questions.latest(10, req.query.pageToken);
+    return res.render('enquetes/list.pug', {
+      url: req.url,
+      topics: topics,
+      news: news,
+      maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
-  });
+  } catch (err) {
+    req.flash('error', 'アンケートの取得に失敗しました。');
+    return next('route');
+  }
 });
 
 // indexページでエラーが発生したとき用のルーティング
@@ -179,11 +171,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
       }
       services.images.createTwitterCard(savedData, answers, (err) => {
         req.flash('info', 'アンケートが作成されました。');
-        if (req.user) {
-          return res.redirect(`${req.baseUrl}/mypage`);
-        } else {
-          return res.redirect(`${req.baseUrl}/`);
-        }
+        return res.redirect(`${req.baseUrl}/${savedData.id}`);
       });
     });
   }
@@ -195,12 +183,9 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
  *
  * アンケート投票画面を表示
  */
-router.get('/:question_id', (req, res, next) => {
-  models.questions.findById(req.params.question_id, (err, question) => {
-    if (err) {
-      req.flash('error', 'アンケートの取得に失敗しました。');
-      res.render('enquetes/view.pug');
-    }
+router.get('/:question_id', async (req, res, next) => {
+  try {
+    const question = await models.questions.findById(parseInt(req.params.question_id));
     const questionWithConditions = services.setConditions(question, req.cookies[req.params.question_id]);
 
     res.render('enquetes/view.pug', {
@@ -209,7 +194,10 @@ router.get('/:question_id', (req, res, next) => {
       question: questionWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
-  });
+  } catch (e) {
+    req.flash('error', 'アンケートの取得に失敗しました。');
+    next(e);
+  }
 });
 
 
@@ -241,12 +229,9 @@ router.post('/:question_id', (req, res, next) => {
  *
  * 投票結果を表示
  */
-router.get('/:question_id/result', (req, res, next) => {
-  models.questions.findById(req.params.question_id, (err, question) => {
-    if (err) {
-      console.log('failed to find question. err: ', err);
-      req.flash('error', '投票結果の取得に失敗しました。時間を空けて再度お試しください。');
-    }
+router.get('/:question_id/result', async (req, res, next) => {
+  try {
+    const question = await models.questions.findById(req.params.question_id);
     question.count = question.answers.reduce((acc, cur) => {
       return acc + cur.result;
     }, 0);
@@ -256,7 +241,10 @@ router.get('/:question_id/result', (req, res, next) => {
       question: question,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
-  });
+  } catch (e) {
+    req.flash('error', '結果の取得に失敗しました。');
+    next(e);
+  }
 });
 
 

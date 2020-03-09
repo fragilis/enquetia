@@ -6,18 +6,15 @@ const table = 'Votes';
 const commons = require('./common_methods');
 const excludeFromIndexes = ['answer_ids'];
 
-function latest(token, cb) {
-  const now = new Date();
-  const q = ds
-    .createQuery([table])
-    .filter('created_at', '>', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
-    .start(token);
+async function latest(token) {
+  try{
+    const now = new Date();
+    const q = ds
+      .createQuery([table])
+      .filter('created_at', '>', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
+      .start(token);
+    const [entities, info] = await ds.runQuery(q);
 
-  ds.runQuery(q, (err, entities, nextQuery) => {
-    if (err) {
-      console.log("ERROR: ", err);
-      return cb(err);
-    }
     const entities_sorted = entities.map(commons.fromDatastore).reduce((acc, cur) => {
       const obj = acc.find(e => e.question_id === cur.question_id);
       if (obj === undefined) acc.push({question_id: cur.question_id, count: 1});
@@ -25,43 +22,40 @@ function latest(token, cb) {
       return acc;
     }, []).sort((a, b) => {return a.count - b.count;});
 
-    return cb(null, entities_sorted);
-  });
-}
-
-function create(vote, cb){
-  const key = ds.key(table);
-  const entity = {
-    key: key,
-    data: commons.toDatastore(vote, excludeFromIndexes),
-  };
-
-  ds.save(entity, err => {
-    if (err) {
-      console.log('ERROR: failed to save entity: ', entity);
-      return cb(err, null);
-    }
-    vote.id = entity.key.id;
-    return cb(null, vote);
-  });
-}
-
-function sumCount(answerList, cb){
-  if(answerList == null || !(answerList instanceof Array) || answerList.length === 0) {
-    const err = {
-      code: 400,
-      message: 'Bad request',
-    };
-    return cb(err);
+    return entities_sorted;
+  } catch (e) {
+    console.log('ERROR: Failed to get latest votes.');
+    throw new Error('ERROR: Failed to get latest votes.');
   }
+}
 
-  const q = ds
-    .createQuery([table])
-    .filter('question_id', Number(answerList[0].question_id));
-  ds.runQuery(q, (err, votes, nextQuery) => {
-    if (err) {
-      return cb(err);
+async function create(vote, cb){
+  try {
+    const key = ds.key(table);
+    const entity = {
+      key: key,
+      data: commons.toDatastore(vote, excludeFromIndexes),
+    };
+
+    const entity = await ds.save(entity);
+    vote.id = entity.key.id;
+    return vote;
+  } catch (e) {
+    console.log('ERROR: Failed to create a vote.');
+    throw new Error('ERROR: Failed to create a vote.');
+  }
+}
+
+async function sumCount(answerList){
+  try {
+    if(answerList == null || !(answerList instanceof Array) || answerList.length === 0) {
+      throw new Error("Bad request.");
     }
+    const q = ds
+      .createQuery([table])
+      .filter('question_id', Number(answerList[0].question_id));
+
+    const [votes, info] = await ds.runQuery(q);
     votes.forEach(vote => {
       vote.answer_ids.forEach(answer_id => {
         if(answerList.filter(answer => answer.id == answer_id).length > 0) {
@@ -69,28 +63,31 @@ function sumCount(answerList, cb){
         }
       });
     });
-    return cb(null, answerList);
-  });
+    return answerList;
+  } catch (e) {
+    console.log('ERROR: Failed to sum vote count.');
+    throw new Error('ERROR: Failed to sum vote count.');
+  }
 }
 
 /**
  * 1日以上前の投票を取得
  */
-function readOld(cb){
-  const now = new Date();
-  const q = ds.createQuery(table)
-    .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
-  ds.runQuery(q, (err, votes, nextQuery) => {
-    if (err) {
-      console.log("ERROR: ", err);
-      return cb(err);
-    }
-    return cb(null, votes.map(commons.fromDatastore));
-  });
+async function readOld(){
+  try {
+    const now = new Date();
+    const q = ds.createQuery(table)
+      .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
+    const [votes, info] = await ds.runQuery(q);
+    return votes.map(commons.fromDatastore);
+  } catch (e) {
+    console.log('ERROR: Failed to read old votes.');
+    throw new Error('ERROR: Failed to read old votes.');
+  }
 }
 
-function _delete(ids, cb){
-  return commons._delete(ids, table, cb);
+async function _delete(ids){
+  return await commons._delete(ids, table);
 }
 
 module.exports = {

@@ -7,54 +7,67 @@ const commons = require('./common_methods');
 const excludeFromIndexes = ['content', 'count'];
 const votes = require('./votes');
 
-function create(answers, question_id, cb){
-  const answers_array = answers instanceof Array ? answers : [answers];
-  const entities = answers_array.map((answer, index) => {
-    answer.question_id = parseInt(question_id);
-    answer.sort_order = index;
-    const key = ds.key(table);
-    const entity = {
-      key: key,
-      data: commons.toDatastore(answer, excludeFromIndexes),
-    };
-    return entity;
-  });
+async function create(answers, question_id){
+  try {
+    const answers_array = answers instanceof Array ? answers : [answers];
+    const entities = answers_array.map((answer, index) => {
+      answer.question_id = parseInt(question_id);
+      answer.sort_order = index;
+      const key = ds.key(table);
+      const entity = {
+        key: key,
+        data: commons.toDatastore(answer, excludeFromIndexes),
+      };
+      return entity;
+    });
 
-  ds.save(entities, err => {
-    cb(err);
-  });
+    await ds.save(entities);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
-function findByParentId(question_id, cb) {
-  const q = ds
-    .createQuery([table])
-    .filter('question_id', question_id)
-    .order("sort_order");
+async function findByParentId(question_id) {
+  try{
+    const q = ds
+      .createQuery([table])
+      .filter('question_id', question_id)
+      .order("sort_order");
 
-  ds.runQuery(q, (err, entities, nextQuery) => {
-    if (err) {
-      return cb(err);
-    }
-    return cb(null, entities.map(commons.fromDatastore));
-  });
+    const [entities, info] = await ds.runQuery(q);
+    return entities.map(commons.fromDatastore);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
-function read(ids, cb) {
-  commons.read(ids, table, cb);
+async function read(ids) {
+  try {
+    return commons.read(ids, table);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
-function getVoteCounts(answerList, cb){
-  votes.sumCount(answerList, (err, answerListWithCount) => {
-    if (err) {
-      console.log('failed on answers.getVoteCount. err: ', err);
-      return cb(err);
-    }
-    return cb(null, answerListWithCount);
-  });
+async function getVoteCounts(answerList){
+  try {
+    return await votes.sumCount(answerList);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
-function update(ids, data, cb){
-  return commons.update(ids, data, excludeFromIndexes, table, cb);
+async function update(ids, data){
+  try {
+    return await commons.update(ids, data, excludeFromIndexes, table);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
 module.exports = {

@@ -24,53 +24,49 @@ function toDatastore(obj, nonIndexed) {
   return results;
 }
 
-function update(ids, data, exclude, table, cb) {
-  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
-  const data_array = data instanceof Array ? data : [data];
-
-  if(ids_array.length != data_array.length){
-    const err = {
-      code: 400,
-      message: 'Bad request',
-    };
-    return cb(err, null);
-  }
-
-  data_array.forEach(data => {
-    const key = ds.key(table);
-    const entity = {
-      key: key,
-      data: toDatastore(data, exclude),
-    };
-  });
-
-  ds.save(data_array, err => {
-    //data.id = entity.key.id;
-    return cb(err, err ? null : data);
-  });
-}
-
-function read(ids, table, cb) {
-  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
-  const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
-  if(keys.length > 0){
-    ds.get(keys, (err, entities) => {
-      if (err) {
-        console.log('err: ', err)
-        return cb(err);
-      }
-      return cb(null, entities.map(fromDatastore));
+async function update(ids, data, exclude, table) {
+  try {
+    const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
+    const data_array = data instanceof Array ? data : [data];
+    if(ids_array.length != data_array.length){
+      throw new Error('Bad request.');
+    }
+    data_array.forEach(data => {
+      const key = ds.key(table);
+      const entity = {
+        key: key,
+        data: toDatastore(data, exclude),
+      };
     });
-  }
-  else {
-    return cb(null, []);
+    return await ds.save(data_array);
+  } catch (e) {
+    console.log(e);
+    throw e;
   }
 }
 
-function _delete(ids, table, cb) {
-  const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
-  const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
-  return ds.delete(keys, cb);
+async function read(ids, table) {
+  try {
+    const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
+    const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
+    if(keys.length == 0) return [];
+    const [entities] = await ds.get(keys);
+    return await entities.map(fromDatastore);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function _delete(ids, table) {
+  try {
+    const ids_array = (ids instanceof Array ? ids : [ids]).map(id => parseInt(id)).filter(id => !isNaN(id));
+    const keys = ids_array.map(id => ds.key([table, parseInt(id, 10)]));
+    return await ds.delete(keys);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
 module.exports = {
