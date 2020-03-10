@@ -1,5 +1,6 @@
 'use strict';
 
+/*
 const Storage = require('@google-cloud/storage');
 const config = require('../config')
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET');
@@ -186,6 +187,26 @@ function createTwitterCard(question, answers, cb){
   } catch (e) {
     console.log(e)
     return cb(e, null);
+  }
+}
+*/
+
+const request = require('request');
+
+
+async function createTwitterCard(question_id){
+  try {
+    const options = {
+      url: 'https://us-central1-enquetia.cloudfunctions.net/createTwitterCard',
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+      }
+    };
+    return await request(options);
+  } catch (e) {
+    console.log(e);
+    throw e;
   }
 }
 
