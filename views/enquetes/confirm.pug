@@ -13,14 +13,14 @@ block content
   .card.mb-4.bg-info-custom
     .card-header.bg-light
       h3.mb-0 #{action}
-    .card-body
+    .card-body.p-4
       p 以下のようなアンケートを作成します。<br />よろしいですか？
       form(method="POST", novalidate)
         input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
         input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
         input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
         input.form-control(type="hidden", name="_csrf", value=csrfToken)
-        .card
+        .card.m-4
           .card-header.clearfix #{question.title}
             input.form-control-plaintext(type="hidden", name="title", id="title", value=question.title)
           .card-body

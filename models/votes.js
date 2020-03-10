@@ -24,12 +24,12 @@ async function latest(token) {
 
     return entities_sorted;
   } catch (e) {
-    console.log('ERROR: Failed to get latest votes.');
-    throw new Error('ERROR: Failed to get latest votes.');
+    console.log(e);
+    throw e;
   }
 }
 
-async function create(vote, cb){
+async function create(vote){
   try {
     const key = ds.key(table);
     const entity = {
@@ -37,12 +37,12 @@ async function create(vote, cb){
       data: commons.toDatastore(vote, excludeFromIndexes),
     };
 
-    const entity = await ds.save(entity);
+    const [savedEntity, info] = await ds.save(entity);
     vote.id = entity.key.id;
     return vote;
   } catch (e) {
-    console.log('ERROR: Failed to create a vote.');
-    throw new Error('ERROR: Failed to create a vote.');
+    console.log(e);
+    throw e;
   }
 }
 
@@ -65,8 +65,8 @@ async function sumCount(answerList){
     });
     return answerList;
   } catch (e) {
-    console.log('ERROR: Failed to sum vote count.');
-    throw new Error('ERROR: Failed to sum vote count.');
+    console.log(e);
+    throw e;
   }
 }
 
@@ -76,13 +76,13 @@ async function sumCount(answerList){
 async function readOld(){
   try {
     const now = new Date();
-    const q = ds.createQuery(table)
+    const q = await ds.createQuery(table)
       .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
     const [votes, info] = await ds.runQuery(q);
     return votes.map(commons.fromDatastore);
   } catch (e) {
-    console.log('ERROR: Failed to read old votes.');
-    throw new Error('ERROR: Failed to read old votes.');
+    console.log(e);
+    throw e;
   }
 }
 

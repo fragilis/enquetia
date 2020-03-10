@@ -17,11 +17,11 @@ block content
       li.breadcrumb-item
         a(href="/" + question.id) アンケート投票
       li.breadcrumb-item.active(aria-current="page") アンケート結果
-  .card.mb-4.bg-info
+  .card.bg-info-custom
     .card-header.bg-light
       h3.mb-0 #{action}
-    .card-body
-      .card
+    .card-body.pb-0
+      .card.m-4.mb-5
         .card-header.clearfix #{question.title}
           a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
           a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
@@ -40,10 +40,12 @@ block content
           - const minutes = question.published_at.getMinutes()
           - const seconds = question.published_at.getSeconds()
           p.card-text.clearfix
+            - totalCount = question.count || 0
+            - period_hours = question.period_hours === -1 ? "無期限" : question.period_hours + "時間";
             small.text-muted.float-right
               | 公開日時：#{year}年#{month}月#{date}日 #{hours}:#{minutes}:#{seconds}<br />
-              | 回答期間：#{question.period_hours}時間<br />
-              | 総回答数：#{question.count}票
+              | 回答期間：#{period_hours}<br />
+              | 総回答数：#{totalCount}票
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")

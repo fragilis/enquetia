@@ -2,10 +2,10 @@ $(function () {
   const ctx = $('#resultChart')[0].getContext("2d");
   const $question = $('#question').data('json');
 
-  const labels = $question.answers.map(answer => answer.value);
-  const total = $question.answers.map(answer => answer.result).reduce((acc, cur) => acc + cur);
+  const labels = $question.answers.map(answer => answer.content);
+  const total = $question.answers.reduce((acc, cur) => acc + cur.count, 0);
   //const data = $question.answers.map(answer => answer.result);
-  const data = $question.answers.map(answer => Math.round(answer.result/total*100*10)/10);
+  const data = $question.answers.map(answer => Math.round(answer.count/total*100*10)/10);
   const myChart = new Chart(ctx, {
     /*
     type: 'pie',

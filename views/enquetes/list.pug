@@ -13,30 +13,34 @@ block head
 block content
   .d-block.d-sm-none.w-100.mb-4
     a.btn.btn-block.btn-primary(href="/add") アンケートを作る
-  .card.mb-4.bg-info
+  .card.mb-4.bg-info-custom
     .card-header.bg-light(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
       h3.mb-0 今話題のアンケート
     .collapse.show#topics
       .card-body
         if topics != null && topics.length
-          each question in topics
+          each question, index in topics
             +card(question)
+            if index != topics.length-1
+              hr.mb-5
         else
-          .card
+          .card.m-4
             .card-body
               p.card-text.mb-0 アンケートはありません。
 
   hr.mb-4
-  .card.bg-info
+  .card.bg-info-custom
     .card-header.bg-light(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
       h3.mb-0 最新アンケート
     .collapse.show#news
       .card-body
         if news != null && news.length
-          each question in news
+          each question, index in news
             +card(question)
+            if index != news.length-1
+              hr.mb-5
         else
-          .card
+          .card.m-4
             .card-body
               p.card-text.mb-0 アンケートはありません。
 

@@ -8,6 +8,8 @@ $(function () {
   });
 
   $('#checkResult').attr('href', location.href.replace(/\/$/, '') + '/result');
+
+  /*
   if(!$question.is_expired){
     window.cookieconsent.initialise({
       "palette": {
@@ -28,4 +30,5 @@ $(function () {
       }
     });
   }
+  */
 })

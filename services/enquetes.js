@@ -45,14 +45,17 @@ function setVoteValues(body){
 }
 
 function setConditions(question, cookie){
-  const published_at = new Date(question.published_at.getTime());
-  const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
-  const current = Date.now();
-  const is_expired = expired_at < current ? true : false;
+  if(question.period_hours === -1) question.is_expired = false;
+  else {
+    const published_at = new Date(question.published_at.getTime());
+    const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
+    const current = Date.now();
+    const is_expired = expired_at < current ? true : false;
+    question.expired_at = expired_at;
+    question.left_hours = (expired_at - current)/1000/60/60;
+    question.is_expired = is_expired;
+  }
   const is_voted = cookie != null;
-  question.expired_at = expired_at;
-  question.left_hours = (expired_at - current)/1000/60/60;
-  question.is_expired = is_expired;
   question.is_voted = is_voted;
 
   return question;

@@ -9,10 +9,11 @@ const votes = require('./votes');
 const excludeFromIndexes = ['answer_type', 'count', 'description', 'period_hours', 'title'];
 
 
-async function popular(token) {
+async function popular(limit, token) {
   try{
     const latestVotes = await votes.latest(token);
-    return await read(latestVotes.map(vote => vote.question_id));
+    const popularQuestions = await read(latestVotes.map(vote => vote.question_id));
+    return popularQuestions.slice(0, limit);
   } catch (e) {
     console.log(e);
     throw e;
@@ -58,8 +59,8 @@ async function create(question, answerList){
       data: commons.toDatastore(question, excludeFromIndexes),
     };
 
-    const entity = await ds.save(entity);
-    const answerList = await answers.create(answerList, entity.key.id);
+    await ds.save(entity);
+    await answers.create(answerList, entity.key.id);
     question.id = entity.key.id;
 
     return question;
@@ -103,10 +104,7 @@ async function findById (ids) {
     if(answerListWithCount == null){
       throw new Error("Failed to read answerListWithCount.");
     }
-    question.answers = answerListWithCount.map(answer => {
-      const obj = {id: answer.id, value: answer.content, result: answer.count};
-      return obj;
-    });
+    question.answers = answerListWithCount;
     return question;
   } catch (e) {
     console.log(e);

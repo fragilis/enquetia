@@ -33,15 +33,29 @@ router.use((req, res, next) => {
  */
 router.get('/', async (req, res, next) => {
   try{
-    const topics = await models.questions.popular(req.query.pageToken);
-    const news = await models.questions.latest(10, req.query.pageToken);
+    const topics = await models.questions.popular(5, req.query.pageToken);
+    const news = await models.questions.latest(5, req.query.pageToken);
+
+    const topicsWithConditions = [];
+    const newsWithConditions = [];
+
+    for(const question of topics){
+      const q = await services.setConditions(question, req.cookies[String(question.id)]);
+      topicsWithConditions.push(q);
+    }
+    for(const question of news){
+      const q = await services.setConditions(question, req.cookies[String(question.id)]);
+      newsWithConditions.push(q);
+    }
+
     return res.render('enquetes/list.pug', {
       url: req.url,
-      topics: topics,
-      news: news,
+      topics: topicsWithConditions,
+      news: newsWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
-  } catch (err) {
+  } catch (e) {
+    console.log(e);
     req.flash('error', 'アンケートの取得に失敗しました。');
     return next('route');
   }
@@ -148,32 +162,32 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
  * バリデーションチェック（2回目）をして今度こそ登録
  */
 router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
-  (req, res, next) => {
-    req.session.question = null;
+  async (req, res, next) => {
+    try {
+      req.session.question = null;
 
-    // validationエラーを処理
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      req.session.question = req.body;
-      return res.redirect(`${req.baseUrl}/add`);
-    }
-
-    // formの値をquestionとanswersに格納
-    const [question, answers] = services.setEnqueteValues(req.body, req.user);
-
-    // アンケートをDBに保存
-    models.questions.create(question, answers, (err, savedData) => {
-      if (err) {
-        req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
-        console.log('err: ', err);
+      // validationエラーを処理
+      const errors = await validationResult(req);
+      if (!errors.isEmpty()) {
         req.session.question = req.body;
-        return res.redirect(`${req.baseUrl}/confirm`);
+        return res.redirect(`${req.baseUrl}/add`);
       }
-      services.images.createTwitterCard(savedData, answers, (err) => {
-        req.flash('info', 'アンケートが作成されました。');
-        return res.redirect(`${req.baseUrl}/${savedData.id}`);
-      });
-    });
+
+      // formの値をquestionとanswersに格納
+      const [question, answers] = await services.setEnqueteValues(req.body, req.user);
+
+      const savedData = await models.questions.create(question, answers);
+
+      //services.images.createTwitterCard(savedData, answers, (err) => {
+      await services.images.createTwitterCard(savedData.id);
+      req.flash('info', 'アンケートが作成されました。アンケート右上のツイッターアイコンから、作成したアンケートについてツイートできます。');
+      return res.redirect(`${req.baseUrl}/${savedData.id}`);
+    } catch (e) {
+      console.log(e);
+      req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+      req.session.question = req.body;
+      return res.redirect(`${req.baseUrl}/confirm`);
+    }
   }
 );
 
@@ -186,7 +200,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
 router.get('/:question_id', async (req, res, next) => {
   try {
     const question = await models.questions.findById(parseInt(req.params.question_id));
-    const questionWithConditions = services.setConditions(question, req.cookies[req.params.question_id]);
+    const questionWithConditions = await services.setConditions(question, req.cookies[req.params.question_id]);
 
     res.render('enquetes/view.pug', {
       url: req.url,
@@ -195,6 +209,7 @@ router.get('/:question_id', async (req, res, next) => {
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {
+    console.log(e);
     req.flash('error', 'アンケートの取得に失敗しました。');
     next(e);
   }
@@ -206,21 +221,24 @@ router.get('/:question_id', async (req, res, next) => {
  *
  * アンケートに投票
  */
-router.post('/:question_id', (req, res, next) => {
-  const vote = services.setVoteValues(req.body);
+router.post('/:question_id', async (req, res, next) => {
+  try {
+    const vote = await services.setVoteValues(req.body);
 
-  // 投票結果をDBに保存
-  models.questions.vote(vote, (err, savedData) => {
-    if (err) {
-      console.log('err: ', err);
-      req.flash('error', '投票に失敗しました。時間を空けて再度お試しください。');
-      return res.redirect(`${req.baseUrl}/${req.url}`);
-    }
+    // 投票結果をDBに保存
+    const savedData = await models.questions.vote(vote);
     const expired_at = new Date(parseInt(req.body.question_id, 10));
     res.cookie(req.body.question_id, '1', {expires: expired_at, httpOnly: true, sameSite: 'Lax'});
-    req.flash('info', '投票に成功しました。');
+    req.flash('info', '投票に成功しました。アンケート右上のツイッターアイコンから、投票結果をツイートできます。');
+
     return res.redirect(`${req.url}/result`);
-  });
+  } catch (e) {
+    console.log(e);
+    req.flash('error', '投票に失敗しました。時間を空けて再度お試しください。');
+
+    return res.redirect(`${req.baseUrl}/${req.url}`);
+  }
+
 });
 
 
@@ -233,7 +251,7 @@ router.get('/:question_id/result', async (req, res, next) => {
   try {
     const question = await models.questions.findById(req.params.question_id);
     question.count = question.answers.reduce((acc, cur) => {
-      return acc + cur.result;
+      return acc + cur.count;
     }, 0);
     res.render('enquetes/result.pug', {
       url: req.url,
@@ -242,6 +260,7 @@ router.get('/:question_id/result', async (req, res, next) => {
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {
+    console.log(e)
     req.flash('error', '結果の取得に失敗しました。');
     next(e);
   }

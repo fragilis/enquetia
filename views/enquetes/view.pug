@@ -16,10 +16,10 @@ block content
       li.breadcrumb-item
         a(href="/") Home
       li.breadcrumb-item.active(aria-current="page") アンケート投票
-  .card.mb-4.bg-info
+  .card.bg-info-custom
     .card-header.bg-light
       h3.mb-0 #{action}
-    .card-body
+    .card-body.pb-0
       if question
         +card(question)
 
