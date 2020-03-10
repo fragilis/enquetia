@@ -10,48 +10,58 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  h3 #{action}
-  p 以下のようなアンケートを作成します。<br />よろしいですか？
-  form.mt-4(method="POST", novalidate)
-    input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
-    input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
-    input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
-    input.form-control(type="hidden", name="_csrf", value=csrfToken)
-    .card
-      .card-header
-        input.form-control-plaintext(type="text", name="title", id="title", value=question.title, readonly)
-      .card-body
-        unless question.description === undefined || question.description === ''
-          p.card-text
-            input.form-control-plaintext(type="text", name="description", id="description", value=question.description, readonly)
-        unless question.hashtags === undefined || question.hashtags === ''
-          - hashtags = question.hashtags.split(' ')
-          p.card-text
-            each hash, index in hashtags
-              input.form-control(type="hidden", name="hashtags[]", id="hashtag"+index, value=hash)
-              a(href="/", class="mr-1") ##{hash}
-        unless question.answers === undefined
-          each answer, index in question.answers
-            input.form-control(type="hidden", name="answers[]", id="answer"+index, value=answer)
-            .form-check.mb-2.ml-5
-              input.form-check-input(id="answer"+index, name="answer", type=question.answer_type)
-              label.form-check-label(for="answer"+index) #{answer}
-        - var time_left = "残り"
-        if parseInt(question.period_hours/24) > 0
-          - time_left += String(parseInt(question.period_hours/24)) + "日"
-        - time_left += String(question.period_hours%24) + "時間"
-        - var publish_status = ""
-        if publish_status === "1"
-          - publish_status += "トップページ公開"
-        else if publish_status === "2"
-          - publish_status += "トップページ非公開"
-        p.card-text.clearfix
-          small.text-muted 〇〇票 #{time_left} #{publish_status}
-          button.btn.btn-outline-primary.btn-sm.float-right(type="button", disabled) 投票する
-    .row.mt-3
-      .col.clearfix
-        button.btn.btn-danger.mt-2.ml-2.float-right(type="submit", name="modify") 修正する
-        button.btn.btn-primary.mt-2.ml-2.float-right(type="submit", name="create", onclick="($this).prop('disabled', true)") 作成する
+  .card.mb-4.bg-info-custom
+    .card-header.bg-light
+      h3.mb-0 #{action}
+    .card-body
+      p 以下のようなアンケートを作成します。<br />よろしいですか？
+      form(method="POST", novalidate)
+        input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
+        input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
+        input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
+        input.form-control(type="hidden", name="_csrf", value=csrfToken)
+        .card
+          .card-header.clearfix #{question.title}
+            input.form-control-plaintext(type="hidden", name="title", id="title", value=question.title)
+          .card-body
+            unless question.description === undefined || question.description === ''
+              p.card-text #{question.description}
+                input.form-control-plaintext(type="hidden", name="description", id="description", value=question.description, readonly)
+            unless question.hashtags === undefined || question.hashtags === ''
+              - hashtags = question.hashtags.split(' ')
+              p.card-text
+                each hash, index in hashtags
+                  input.form-control(type="hidden", name="hashtags[]", id="hashtag"+index, value=hash)
+                  a(href="/", class="mr-1") ##{hash}
+
+            fieldset.form-group.pt-3
+              .row
+                unless question.answers === undefined
+                  each answer, index in question.answers
+                    input.form-control(type="hidden", name="answers[]", id="answer"+index, value=answer)
+                    .form-check.mb-3.pl-5.col-xs-12.col-sm-6
+                      input.form-check-input(id="answer"+index, name="answer", type=question.answer_type)
+                      label.form-check-label(for="answer"+index) #{answer}
+
+            - var time_left = "無期限"
+            if question.period_hours != -1
+              - var time_left = "残り"
+              if parseInt(question.period_hours/24) > 0
+                - time_left += String(parseInt(question.period_hours/24)) + "日"
+              - time_left += String(question.period_hours%24) + "時間"
+            - var publish_status = ""
+            if publish_status === "1"
+              - publish_status += "トップページ公開"
+            else if publish_status === "2"
+              - publish_status += "トップページ非公開"
+            p.card-text.clearfix
+              small.text-muted 〇〇票 #{time_left} #{publish_status}
+                a.ml-2 結果を見る
+              button.btn.btn-outline-primary.btn-sm.float-right(type="button", disabled) 投票する
+        .row.mt-3
+          .col.clearfix
+            button.btn.btn-danger.mt-2.ml-2.float-right(type="submit", name="modify") 修正する
+            button.btn.btn-primary.mt-2.ml-2.float-right(type="submit", name="create", onclick="($this).prop('disabled', true)") 作成する
 
 //- block script
   script(type='text/javascript', src='/js/confirm.js', id='question', data-json=JSON.stringify(question))

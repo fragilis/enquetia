@@ -15,12 +15,12 @@ block content
     .form-group
       label(for="content") 質問
       span.badge.badge-pill.badge-danger 必須
-      input.form-control(type="text", name="title", id="title", value=question.title, required, maxlength="20")
-      .invalid-feedback 20文字以内で入力してください。
+      input.form-control(type="text", name="title", id="title", value=question.title, required, maxlength="40")
+      .invalid-feedback 40文字以内で入力してください。
     .form-group
       label(for="description") 詳細
-      textarea.form-control(name="description", id="description", value=question.description, rows="3", maxlength="100")= question.description
-      .invalid-feedback 100文字以内で入力してください。
+      textarea.form-control(name="description", id="description", value=question.description, rows="3", maxlength="200")= question.description
+      .invalid-feedback 200文字以内で入力してください。
     .form-group.clearfix#items
       label(for="answer") 回答
       span.badge.badge-pill.badge-danger 必須

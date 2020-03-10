@@ -8,24 +8,27 @@ mixin card(question)
         unless question.description === undefined || question.description === ''
           p.card-text #{question.description}
         unless question.hashtags === undefined || question.hashtags === ''
+          - hashtags = question.hashtags.split(' ')
           p.card-text
-            a #test
+            each hash, index in hashtags
+              a(href="/", class="mr-1") ##{hash}
         input.form-control(type="hidden", name="question_id", id="question_id", value=question.id)
         input.form-control(type="hidden", name="expired_at", id="expired_at", value=question.expired_at)
 
-        fieldset.form-group
+        fieldset.form-group.pt-3
           .row
-            each answer, index in question.answers
-              .form-check.mb-3.pl-5.col-xs-12.col-sm-6
-                if question.answer_type === "radio" && index === 0
-                  input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
-                else
-                  input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
-                label.form-check-label(for="answer"+index) #{answer.content}
-                if question.answers.length === index+1
-                  .invalid-feedback どれか1つを選択してください。
+            unless question.answers === undefined
+              each answer, index in question.answers
+                .form-check.mb-3.pl-5.col-xs-12.col-sm-6
+                  if question.answer_type === "radio" && index === 0
+                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
+                  else
+                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
+                  label.form-check-label(for="answer"+index) #{answer.content}
+                  if question.answers.length === index+1
+                    .invalid-feedback どれか1つを選択してください。
 
-        - var time_left = " "
+        - var time_left = ""
         if question.is_expired
           - time_left += "受付は終了しました"
         else if question.is_voted
