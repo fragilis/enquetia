@@ -1,12 +1,12 @@
 body {
-  background-color: lightcyan;
+  background-color: #eef5f5;
 }
 .error-template {padding: 40px 15px;text-align: center;}
 .error-actions {margin-top:15px;margin-bottom:15px;}
 .error-actions .btn { margin-right:10px; }
 
 .bg-info-custom {
-  background-color: #A0F6D2;
+  background-color: rgb(190, 239, 224);
 }
 .bg-light-custom {
   background-color: white;

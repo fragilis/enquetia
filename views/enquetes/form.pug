@@ -24,34 +24,31 @@ block content
     .form-group.clearfix#items
       label(for="answer") 回答
       span.badge.badge-pill.badge-danger 必須
-      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="選択肢を入力します。「選択肢を追加」ボタンを押すと最大8個まで選択肢を増やすことができます。不要な選択肢は入力欄右側の×ボタンで削除できます。")
       button.btn.btn-outline-primary.mt-n2.float-right#add_item(type="button") 選択肢を追加
       span ※選択肢は#{maxItemCount}個までです。
     .form-group
       label(for="answer_type") 回答形式
       span.badge.badge-pill.badge-danger 必須
-      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答形式を選択します。「ラジオボタン」の場合は選択肢から1つだけ選んで回答します。「チェックボックス」の場合は複数選択が可能です。")
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答形式を選択します。選択肢を1つ選んで回答する場合は「ラジオボタン」を、複数選んで回答する場合は「チェックボックス」を選んでください。")
       select.form-control(name="answer_type", id="answer_type", value=question.answer_type, required)
         option(value="radio") ラジオボタン
         option(value="checkbox") チェックボックス
       .invalid-feedback どれか1つを選択してください。
     .form-group
       label(for="hashtags") ハッシュタグ（半角スペース区切り）
-      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="アンケートにハッシュタグを追加します。ハッシュタグはアンケートの検索に使用されます。")
-      input.form-control(type="text", name="hashtags", id="hashtags", value=question.hashtags, maxlength="200")
-      .invalid-feedback 200文字以内で入力してください。
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="アンケートにハッシュタグを追加します。ハッシュタグはアンケートの検索で使います。")
+      input.form-control(type="text", name="hashtags", id="hashtags", value=question.hashtags, maxlength="100")
+      .invalid-feedback 100文字以内で入力してください。
     .form-group
       label(for="period_hours") 回答期間
       span.badge.badge-pill.badge-danger 必須
-      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答を受け付ける期間を指定します。")
+      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答を受け付ける期間を設定します。")
       select.form-control(name="period_hours", id="period_hours", value=question.period_hours, required)
         option(value="6") 6時間
         option(value="12") 12時間
         option(value="24") 1日間
         option(value="48") 2日間
         option(value="72") 3日間
-        option(value="168") 7日間
-        option(value="-1") 無期限
       .invalid-feedback どれか1つを選択してください。
     .form-group
       label(for="answer_type") トップページに公開
