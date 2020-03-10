@@ -42,6 +42,6 @@ function add_item(num, answer){
   }
   else{
     $add_item = $('#add_item');
-    $add_item.before('<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">選択肢' + num + '</span></div><input class="form-control" type="text" name="answers[]" id="answer' + num + '" value="' + answer + '" required maxlength="20"><div class="input-group-append"><button class="btn btn-outline-secondary" type="button" title="選択肢を削除" onclick="delete_item(' + num + ')">×</div><div class="invalid-feedback">20文字以内で入力してください。</div></div>');
+    $add_item.before('<div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text">選択肢' + num + '</span></div><input class="form-control" type="text" name="answers[]" id="answer' + num + '" value="' + answer + '" required maxlength="40"><div class="input-group-append"><button class="btn btn-outline-secondary" type="button" title="選択肢を削除" onclick="delete_item(' + num + ')">×</div><div class="invalid-feedback">40文字以内で入力してください。</div></div>');
   }
 }
