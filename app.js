@@ -73,6 +73,9 @@ const sessionConfig = {
   */
 };
 
+// flash
+app.use(flash());
+
 const j = schedule.scheduleJob('*/10 * * * *', function() {
   cron.refreshVotes();
 });
@@ -94,9 +97,6 @@ app.use(bodyParser.urlencoded({
 // parse application/json 
 app.use(bodyParser.json({ type: 'application/*+json' }));
 app.use(cookieParser());
-
-// flash
-app.use(flash());
 
 app.use('/api', require('./controllers/enquetes/api'));
 app.use('/', require('./controllers/enquetes/crud'));
