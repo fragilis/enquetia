@@ -4,17 +4,16 @@ const {Datastore} = require('@google-cloud/datastore');
 const ds = new Datastore();
 const models = require('./models/model-datastore');
 
-function refreshVotes(){
-  console.log('Starting refreshVotes().');
+async function refreshVotes(){
+  try {
+    console.log('Starting refreshVotes().');
 
-  // votesの古いentityを取得
-  models.votes.readOld((err, votes) => {
-    if (err) {
-      console.log('refreshVotes() failed.');
-      return;
-    }
+    // votesの古いentityを取得
+    const votes = await models.votes.readOld();
+
     const questions = [];
     const answers = [];
+
     votes.forEach(vote => {
       // question_idごとに得票数をカウント
       if(questions.length === 0 || questions.filter(q => q.id == vote.question_id).length === 0) questions.push({id: Number(vote.question_id), count: 1}); 
@@ -28,67 +27,45 @@ function refreshVotes(){
     });
 
     // countを更新するentityをquestionsとanswersそれぞれ取得
-    models.questions.read(questions.map(q => q.id), (err, q_entities) => {
-      if (err) {
-        console.log("ERROR: ", err);
-        return;
-      }
-      models.answers.read(answers.map(a => a.id), (err, a_entities) => {
-        if (err) {
-          console.log("ERROR: ", err);
-          return;
-        }
+    const q_entities = await models.questions.read(questions.map(q => q.id));
+    const a_entities = await models.answers.read(answers.map(a => a.id));
 
-        // questions.countの更新、answers.countの更新、votesの削除の3つを同じtransactionで行う
-        q_entities.forEach(question => {
-          const transaction = ds.transaction();
-          transaction.run((err) => {
-            if (err) {
-              console.log("ERROR: ", err);
-              return;
-            }
-            const key = ds.key(['Questions', ds.int(question.id)]);
-            question.count += questions.filter(q => q.id == question.id)[0].count;
-            question.id = undefined;
+    // questions.countの更新、answers.countの更新、votesの削除の3つを同じtransactionで行う
+    for(question of q_entities){
+      const transaction = await ds.transaction();
+      await transaction.run();
 
-            const entity = {
-              key: key,
-              data: question
-            };
-            transaction.save(question);
-            transaction.save(a_entities.filter(a => a.question_id == question.id).map(answer => {
-              const key = ds.key(['Answers', ds.int(answer.id)]);
-              answer.count += answers.filter(a => a.id == answer.id)[0].count;
-              answer.id = undefined;
+      const key = await ds.key(['Questions', ds.int(question.id)]);
+      question.count += questions.filter(q => q.id == question.id)[0].count;
+      question.id = undefined;
 
-              const entity = {
-                key: key,
-                data: answer
-              };
-              return entity;
-            }));
+      const entity = {
+        key: key,
+        data: question
+      };
+      await transaction.save(question);
+      await transaction.save(a_entities.filter(a => a.question_id == question.id).map(answer => {
+        const key = ds.key(['Answers', ds.int(answer.id)]);
+        answer.count += answers.filter(a => a.id == answer.id)[0].count;
+        answer.id = undefined;
 
-            transaction.commit((err)=> {
-              if(!err){
-                models.votes._delete(votes.filter(v => v.question_id = question.id).map(vote => vote.id), (err) => {
-                  if (err) {
-                    console.log("count was updated, however, votes have not been deleted.");
-                    console.log("ERROR: ", err);
-                    return;
-                  }
-                  console.log('refreshVotes() succeeded.');
-                  return;
-                });
-              } else {
-                console.log("ERROR: ", err);
-                return;
-              }
-            });
-          });
-        });
-      });
-    });
-  });
+        const entity = {
+          key: key,
+          data: answer
+        };
+        return entity;
+      }));
+
+      await transaction.commit();
+      await models.votes._delete(votes.filter(v => v.question_id = question.id).map(vote => vote.id));
+      console.log('refreshVotes() succeeded.');
+
+      return;
+    }
+  } catch (e) {
+    console.log(e);
+    return;
+  }
 }
 
 module.exports = {
