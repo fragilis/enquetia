@@ -34,11 +34,12 @@ block content
         option(value="radio") ラジオボタン
         option(value="checkbox") チェックボックス
       .invalid-feedback どれか1つを選択してください。
-    .form-group
-      label(for="hashtags") ハッシュタグ（半角スペース区切り）
-      i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="アンケートにハッシュタグを追加します。ハッシュタグはアンケートの検索で使います。")
-      input.form-control(type="text", name="hashtags", id="hashtags", value=question.hashtags, maxlength="100")
-      .invalid-feedback 100文字以内で入力してください。
+    //-
+      .form-group
+        label(for="hashtags") ハッシュタグ（半角スペース区切り）
+        i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="アンケートにハッシュタグを追加します。ハッシュタグはアンケートの検索で使います。")
+        input.form-control(type="text", name="hashtags", id="hashtags", value=question.hashtags, maxlength="100")
+        .invalid-feedback 100文字以内で入力してください。
     .form-group
       label(for="period_hours") 回答期間
       span.badge.badge-pill.badge-danger 必須
