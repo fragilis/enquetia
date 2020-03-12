@@ -16,6 +16,7 @@ block content
   .card.mb-4.bg-info-custom
     .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
       h3.mb-0 今話題のアンケート
+        i.fas.fa-bars.float-right
     .collapse.show#topics
       .card-body
         if topics != null && topics.length
@@ -32,6 +33,7 @@ block content
   .card.bg-info-custom
     .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
       h3.mb-0 最新アンケート
+        i.fas.fa-bars.float-right
     .collapse.show#news
       .card-body
         if news != null && news.length
