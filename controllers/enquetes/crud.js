@@ -181,7 +181,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
 
       const savedData = await models.questions.create(question, answers);
 
-      await services.images.createTwitterCard(savedData.id);
+      services.images.createTwitterCard(savedData.id);
       req.flash('info', 'アンケートが作成されました。アンケート右上のツイッターアイコンから、作成したアンケートについてツイートできます。');
       return res.redirect(`${req.baseUrl}/${savedData.id}`);
     } catch (e) {

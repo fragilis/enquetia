@@ -149,7 +149,7 @@ router.post('/:question_id/edit', validation.checkQuestionModification, parseFor
 
       const savedData = await models.questions.update(Number(req.params.question_id), question);
 
-      await services.images.createTwitterCard(savedData.id);
+      services.images.createTwitterCard(savedData.id);
       req.flash('info', 'アンケートが修正されました。');
       return res.redirect(`${req.baseUrl}`);
     } catch (e) {
