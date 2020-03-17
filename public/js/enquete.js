@@ -75,3 +75,24 @@ function removeFromFavorite(question_id){
     $navbar.after(dom);
   });
 }
+
+function showResult(dom){
+  const $enqueteUnit = $(dom).closest('.enqueteUnit');
+  $enqueteUnit.find('.vote').hide();
+  $enqueteUnit.find('.result').show();
+  /*
+  for(const id in Chart.instances){
+    if($(Chart.instances[id].canvas).is($enqueteUnit.find('canvas.result'))){
+      Chart.instances[id].reset();
+      Chart.instances[id].update();
+      break;
+    }
+  }
+  */
+}
+
+function showVote(dom){
+  const $enqueteUnit = $(dom).closest('.enqueteUnit');
+  $enqueteUnit.find('.vote').show();
+  $enqueteUnit.find('.result').hide();
+}

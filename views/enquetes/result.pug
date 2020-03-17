@@ -24,7 +24,12 @@ block content
         h3.mb-0 #{action}
       .card-body
         if question
-          +result(question)
+          .enqueteUnit
+            .result
+              +result(question)
+            .vote(style="display: none;")
+              +card(question)
+
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
