@@ -1,6 +1,7 @@
 'use strict';
 
 const images = require('./images');
+const models = require('../models/model-datastore');
 
 function setEnqueteValues(body, user){
   const question = {
@@ -23,7 +24,7 @@ function setEnqueteValues(body, user){
 
   // If the user is logged in, set them as the creator of the question.
   if (user) {
-    question.user_id = user.id;
+    question.user_id = parseInt(user.id);
   } else {
     question.user_id = 0;
   }
@@ -44,21 +45,31 @@ function setVoteValues(body){
   return vote;
 }
 
-function setConditions(question, cookie){
-  if(question.period_hours === -1) question.is_expired = false;
-  else {
-    const published_at = new Date(question.published_at.getTime());
-    const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
-    const current = Date.now();
-    const is_expired = expired_at < current ? true : false;
-    question.expired_at = expired_at;
-    question.left_hours = (expired_at - current)/1000/60/60;
-    question.is_expired = is_expired;
-  }
-  const is_voted = cookie != null;
-  question.is_voted = is_voted;
+async function setConditions(question, cookie, profile){
+  try {
+    if(question.period_hours === -1) question.is_expired = false;
+    else {
+      const published_at = new Date(question.published_at.getTime());
+      const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
+      const current = Date.now();
+      const is_expired = expired_at < current ? true : false;
+      question.expired_at = expired_at;
+      question.left_hours = (expired_at - current)/1000/60/60;
+      question.is_expired = is_expired;
+    }
+    question.is_voted =  cookie != null;
 
-  return question;
+    if(profile == null || profile.id == null){
+      question.is_favorite = false;
+    } else {
+      question.is_favorite = await models.favorites.isFavorite(Number(profile.id), question.id);
+    }
+
+    return question;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
 module.exports = {

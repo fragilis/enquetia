@@ -10,4 +10,14 @@ indexes:
   - name: publish_status
   - name: published_at
     direction: desc
+
+- kind: Questions
+  properties:
   - name: user_id
+  - name: published_at
+    direction: desc
+
+- kind: Favorites
+  properties:
+  - name: user_id
+  - name: question_id

@@ -1,5 +1,5 @@
 extends ../base.pug
-include _card
+include ../_card
 
 block head
   meta(name="description", content="Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
@@ -11,38 +11,50 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  .d-block.d-sm-none.w-100.mb-4
+  .d-block.d-sm-none.w-100.mb-3.mt-3
     a.btn.btn-block.btn-primary(href="/add") アンケートを作る
-  .card.mb-4.bg-info-custom
-    .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
-      h3.mb-0 今話題のアンケート
-        i.fas.fa-bars.float-right
-    .collapse.show#topics
-      .card-body
-        if topics != null && topics.length
-          each question, index in topics
-            +card(question)
-            if index != topics.length-1
-              hr.mb-5
-        else
-          .card.m-0.m-sm-4
-            .card-body
-              p.card-text.mb-0 アンケートはありません。
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
+    .card.mb-4.bg-info-custom
+      .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+        h3.mb-0 今話題のアンケート
+          i.fas.fa-bars.float-right
+      .collapse.show#topics
+        .card-body
+          if topics != null && topics.length
+            each question, index in topics
+              if question.is_voted || question.is_expired
+                +result(question)
+              else
+                +card(question)
+              if index != topics.length-1
+                hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+          else
+            .card.m-0.m-sm-4
+              .card-body
+                p.card-text.mb-0 アンケートはありません。
 
-  hr.mb-4
-  .card.bg-info-custom
-    .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
-      h3.mb-0 最新アンケート
-        i.fas.fa-bars.float-right
-    .collapse.show#news
-      .card-body
-        if news != null && news.length
-          each question, index in news
-            +card(question)
-            if index != news.length-1
-              hr.mb-5
-        else
-          .card.m-0.m-sm-4
-            .card-body
-              p.card-text.mb-0 アンケートはありません。
+    hr.mb-4.mt-4.mb-sm-5.mt-sm-5
+    .card.bg-info-custom
+      .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
+        h3.mb-0 最新アンケート
+          i.fas.fa-bars.float-right
+      .collapse.show#news
+        .card-body
+          if news != null && news.length
+            each question, index in news
+              if question.is_voted || question.is_expired
+                +result(question)
+              else
+                +card(question)
+              if index != news.length-1
+                hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+          else
+            .card.m-0.m-sm-4
+              .card-body
+                p.card-text.mb-0 アンケートはありません。
 
+block script
+  link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
+  script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+  script(type='text/javascript', src='https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js')
+  script(type='text/javascript', src='/js/result.js', id='question', data-json=JSON.stringify(question))

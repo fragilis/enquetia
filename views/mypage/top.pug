@@ -1,0 +1,68 @@
+extends ../base.pug
+include ../_card
+
+block head
+  meta(name="description", content="Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(name="twitter:card", content="summary")
+  meta(property="og:type", content="website")
+  meta(property="og:title", content="Enquetia (アンケティア) - みんなでアンケしよう！")
+  meta(property="og:description", content="Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" +maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(property="og:image", content="https://enquetia.net/img/logo.png")
+  meta(property="og:image:alt", content="enquetia")
+
+block content
+  .d-block.d-sm-none.w-100.mb-3.mt-3
+    a.btn.btn-block.btn-primary(href="/add") アンケートを作る
+
+  .container
+    .row
+      .col.p-0.pl-sm-3.pr-sm-3
+        ul.nav.nav-pills.nav-fill.mt-4.ml-sm-3.mr-sm-3.mb-2
+          li.nav-item
+            a.nav-link.active#pills-mine-tab(data-toggle="pill", href="#pills-mine", role="tab", aria-controls="pills-mine", aria-selected="true") マイアンケート
+          li.nav-item
+            a.nav-link#pills-favorites-tab(data-toggle="pill", href="#pills-favorites", role="tab", aria-controls="pills-favorites", aria-selected="false") お気に入り
+
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
+    .tab-content#pills-tabContent
+      .tab-pane.fade.show.active#pills-mine(role="tabpanel", aria-labelledby="pills-mine-tab")
+        .card.mb-4.bg-info-custom
+          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+            h3.mb-0 マイアンケート
+          .card-body
+            if enquetes != null && enquetes.length
+              each question, index in enquetes
+                if question.is_voted || question.is_expired
+                  +editableResult(question)
+                else
+                  +editableCard(question)
+                if index != enquetes.length-1
+                  hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+            else
+              .card.m-0.m-sm-4
+                .card-body
+                  p.card-text.mb-0 アンケートはありません。
+
+      .tab-pane.fade#pills-favorites(role="tabpanel", aria-labelledby="pills-favorites-tab")
+        .card.mb-4.bg-info-custom
+          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+            h3.mb-0 お気に入り
+          .card-body
+            if favorites != null && favorites.length
+              each question, index in favorites
+                if question.is_voted || question.is_expired
+                  +result(question)
+                else
+                  +card(question)
+                if index != favorites.length-1
+                  hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+            else
+              .card.m-0.m-sm-4
+                .card-body
+                  p.card-text.mb-0 アンケートはありません。
+
+block script
+  link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
+  script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+  script(type='text/javascript', src='https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js')
+  script(type='text/javascript', src='/js/result.js', id='question', data-json=JSON.stringify(question))

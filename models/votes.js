@@ -6,6 +6,28 @@ const table = 'Votes';
 const commons = require('./common_methods');
 const excludeFromIndexes = ['answer_ids'];
 
+async function findByQuestionId(question_id){
+  try {
+    const q = await ds.createQuery([table])
+      .filter('question_id', Number(question_id));
+    const [votes, info] = await ds.runQuery(q);
+    return votes.map(commons.fromDatastore);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function deleteByQuestionId(question_id){
+  try {
+    const votes = await findByQuestionId(question_id);
+    await _delete(votes.map(vote => Number(vote.id)));
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
 async function latest(token) {
   try{
     const now = new Date();
@@ -14,15 +36,14 @@ async function latest(token) {
       .filter('created_at', '>', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
       .start(token);
     const [entities, info] = await ds.runQuery(q);
-
-    const entities_sorted = entities.map(commons.fromDatastore).reduce((acc, cur) => {
+    const questionIdsWithCounts = entities.map(commons.fromDatastore).reduce((acc, cur) => {
       const obj = acc.find(e => e.question_id === cur.question_id);
       if (obj === undefined) acc.push({question_id: cur.question_id, count: 1});
       else acc.find(e => e.question_id === cur.question_id).count++;
       return acc;
-    }, []).sort((a, b) => {return a.count - b.count;});
+    }, []);
 
-    return entities_sorted;
+    return questionIdsWithCounts;
   } catch (e) {
     console.log(e);
     throw e;
@@ -49,7 +70,7 @@ async function create(vote){
 async function sumCount(answerList){
   try {
     if(answerList == null || !(answerList instanceof Array) || answerList.length === 0) {
-      throw new Error("Bad request.");
+      return answerList;
     }
     const q = ds
       .createQuery([table])
@@ -87,10 +108,17 @@ async function readOld(){
 }
 
 async function _delete(ids){
-  return await commons._delete(ids, table);
+  try {
+    return await commons._delete(ids, table);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
 }
 
 module.exports = {
+  findByQuestionId: findByQuestionId,
+  deleteByQuestionId: deleteByQuestionId,
   latest: latest,
   create: create,
   sumCount: sumCount,

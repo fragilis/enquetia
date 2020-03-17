@@ -60,17 +60,10 @@ const sessionConfig = {
   saveUninitialized: false,
   secret: config.get('SECRET'),
   signed: true,
-  cookie: {
-    httpOnly: true,
-    secure: true,
-    //maxage: 1000*60*60*24
-  }
-  /*
   store: new DatastoreStore({
     dataset: new Datastore(),
     kind: 'express-sessions',
   }),
-  */
 };
 
 // flash
@@ -87,6 +80,7 @@ app.use(express.static('public'));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(oauth.router);
+app.use(oauth.template);
 
 // parse application/x-www-form-urlencoded 
 app.use(bodyParser.urlencoded({
@@ -96,11 +90,11 @@ app.use(bodyParser.urlencoded({
 
 // parse application/json 
 app.use(bodyParser.json({ type: 'application/*+json' }));
-app.use(cookieParser());
+app.use(cookieParser(config.get('SECRET')));
 
 app.use('/api', require('./controllers/enquetes/api'));
-app.use('/', require('./controllers/enquetes/crud'));
 app.use('/mypage', require('./controllers/mypages/crud'));
+app.use('/', require('./controllers/enquetes/crud'));
 
 // Add the error logger after all middleware and routes so that
 // it can log errors from the whole application. Any custom error

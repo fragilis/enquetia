@@ -31,7 +31,7 @@ async function refreshVotes(){
     const a_entities = await models.answers.read(answers.map(a => a.id));
 
     // questions.countの更新、answers.countの更新、votesの削除の3つを同じtransactionで行う
-    for(question of q_entities){
+    for(let question of q_entities){
       const transaction = await ds.transaction();
       await transaction.run();
 
@@ -43,8 +43,10 @@ async function refreshVotes(){
         key: key,
         data: question
       };
-      await transaction.save(question);
-      await transaction.save(a_entities.filter(a => a.question_id == question.id).map(answer => {
+      await transaction.save(entity);
+
+      const my_a_entities = a_entities.filter(a => a.question_id == question.id);
+      for(let answer of my_a_entities){
         const key = ds.key(['Answers', ds.int(answer.id)]);
         answer.count += answers.filter(a => a.id == answer.id)[0].count;
         answer.id = undefined;
@@ -53,11 +55,11 @@ async function refreshVotes(){
           key: key,
           data: answer
         };
-        return entity;
-      }));
+        await transaction.save(entity);
+      }
 
       await transaction.commit();
-      await models.votes._delete(votes.filter(v => v.question_id = question.id).map(vote => vote.id));
+      await models.votes._delete(votes.filter(v => v.question_id == question.id).map(vote => vote.id));
       console.log('refreshVotes() succeeded.');
 
       return;

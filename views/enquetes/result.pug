@@ -1,4 +1,5 @@
 extends ../base.pug
+include ../_card
 
 block head
   meta(name="description", content="「" + question.title + "」の気になる投票結果はこちら！")
@@ -10,42 +11,20 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  nav(aria-label="breadcrumb")
-    ol.breadcrumb
-      li.breadcrumb-item
-        a(href="/") Home
-      li.breadcrumb-item
-        a(href="/" + question.id) アンケート投票
-      li.breadcrumb-item.active(aria-current="page") アンケート結果
-  .card.bg-info-custom
-    .card-header.bg-light-custom
-      h3.mb-0 #{action}
-    .card-body.pb-0
-      .card.m-4.mb-5
-        .card-header.clearfix #{question.title}
-          a.float-right#twitter(href="http://twitter.com/share?url=#{}", target="_blank")
-          a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
-            img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
-        .card-body
-          unless question.description === undefined || question.description === ''
-            p.card-text #{question.description}
-          unless question.hashtags === undefined || question.hashtags === ''
-            p.card-text
-              a #test
-          canvas(id="resultChart")
-          - const year = question.published_at.getFullYear()
-          - const month = question.published_at.getMonth()+1
-          - const date = question.published_at.getDate()
-          - const hours = question.published_at.getHours()
-          - const minutes = question.published_at.getMinutes()
-          - const seconds = question.published_at.getSeconds()
-          p.card-text.clearfix
-            - totalCount = question.count || 0
-            - period_hours = question.period_hours === -1 ? "無期限" : question.period_hours + "時間";
-            small.text-muted.float-right
-              | 公開日時：#{year}年#{month}月#{date}日 #{hours}:#{minutes}:#{seconds}<br />
-              | 回答期間：#{period_hours}<br />
-              | 総回答数：#{totalCount}票
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Home
+        li.breadcrumb-item
+          a(href="/" + question.id) アンケート投票
+        li.breadcrumb-item.active(aria-current="page") アンケート結果
+    .card.bg-info-custom
+      .card-header.bg-light-custom
+        h3.mb-0 #{action}
+      .card-body
+        if question
+          +result(question)
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")

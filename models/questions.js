@@ -6,14 +6,21 @@ const table = 'Questions';
 const commons = require('./common_methods');
 const answers = require('./answers');
 const votes = require('./votes');
+const favorites = require('./favorites');
 const excludeFromIndexes = ['answer_type', 'count', 'description', 'period_hours', 'title'];
 
 
 async function popular(limit, token) {
   try{
     const latestVotes = await votes.latest(token);
-    const popularQuestions = await read(latestVotes.map(vote => vote.question_id));
-    return popularQuestions.slice(0, limit);
+    const questions = [];
+    for(let question_id of latestVotes.map(vote => vote.question_id)){
+      const question = await findById(question_id);
+      questions.push(question);
+    }
+    const topics = questions.slice(0, limit);
+
+    return topics.sort((a, b) => {return b.count - a.count});
   } catch (e) {
     console.log(e);
     throw e;
@@ -26,25 +33,24 @@ async function latest(limit, token) {
       .createQuery([table])
       .filter('publish_status', 1)
       .order("published_at", {descending: true})
-      .order("user_id")
       .limit(limit)
       .start(token);
 
     const [entities, info] = await ds.runQuery(q);
+    /*
     const entities_filtered =  entities.filter(async (e) => {
       const deadline = await e.period_hours === -1 ? null : (new Date(e.published_at.getTime())).setHours(e.published_at.getHours() + e.period_hours);
       return deadline === null || deadline > Date.now();
     });
+    */
 
-    const questions = entities.map(commons.fromDatastore);
-    for(let question of questions){
-      const answerList = await answers.findByParentId(question.id);
-      if(answerList == null){
-        throw new Error('AnswerList is empty.');
-      }
-      question.answers = answerList;
+    const questions = [];
+    for(let entity of entities.map(commons.fromDatastore)){
+      const question = await findById(entity.id);
+      questions.push(question);
     }
-    return questions.map(commons.fromDatastore);
+
+    return questions;
   } catch (e) {
     console.log(e);
     throw e;
@@ -105,7 +111,20 @@ async function findById (ids) {
       throw new Error("Failed to read answerListWithCount.");
     }
     question.answers = answerListWithCount;
+    const voteCount = await getVoteCount(question.id);
+    question.count += voteCount;
+
     return question;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function getVoteCount(question_id){
+  try {
+    const entities = await votes.findByQuestionId(question_id);
+    return entities.length;
   } catch (e) {
     console.log(e);
     throw e;
@@ -148,12 +167,86 @@ async function update(ids, data){
   }
 }
 
+async function myQuestions(user_id, limit, token){
+  try {
+    const q = ds
+      .createQuery([table])
+      .filter('user_id', user_id)
+      .order("published_at", {descending: true})
+      .limit(limit)
+      .start(token);
+
+    const [entities, info] = await ds.runQuery(q);
+
+    const questions = [];
+    for(let entity of entities.map(commons.fromDatastore)){
+      const question = await findById(entity.id);
+      questions.push(question);
+    }
+
+    return questions;
+  }catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function myFavorites(user_id, limit, token){
+  try {
+    const myFavorites = await favorites.myFavorites(user_id);
+    const entities = await read(myFavorites.map(favorite => favorite.question_id));
+
+    const questions = [];
+    for(let entity of entities.map(commons.fromDatastore)){
+      const question = await findById(entity.id);
+      questions.push(question);
+    }
+
+    return questions;
+  }catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function _delete(ids){
+  try {
+    return await commons._delete(ids, table);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function deleteByQuestionId(question_id) {
+  try {
+    const transaction = await ds.transaction();
+    await transaction.run();
+
+    await _delete(question_id);
+    await answers.deleteByQuestionId(question_id);
+
+    await transaction.commit();
+
+    await votes.deleteByQuestionId(question_id);
+    await favorites.deleteByQuestionId(question_id);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
 module.exports = {
   read: read,
   findById: findById,
+  myQuestions: myQuestions,
+  myFavorites: myFavorites,
+  getVoteCount: getVoteCount,
   create: create,
   latest: latest,
   popular: popular,
   vote: vote,
   update: update,
+  _delete: _delete,
+  deleteByQuestionId: deleteByQuestionId,
 };

@@ -1,13 +1,12 @@
 'use strict';
 
 const express = require('express');
-const images = require('../../lib/images');
 const models = require('../../models/model-datastore');
 const { validationResult } = require('express-validator');
 const validation = require('../../validation');
 const config = require('../../config');
 const services = require('../../services/enquetes');
-const oauth = require('../../lib/oauth');
+//const oauth = require('../../lib/oauth');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const csurf = require('csurf');
@@ -16,7 +15,7 @@ const csurf = require('csurf');
 const csrfProtection = csurf({ cookie: true });
 const parseForm = bodyParser.urlencoded({ extended: false });
 
-router.use(oauth.template);
+//router.use(oauth.template);
 
 // Set Content-Type for all responses for these routes
 router.use((req, res, next) => {
@@ -40,13 +39,18 @@ router.get('/', async (req, res, next) => {
     const newsWithConditions = [];
 
     for(const question of topics){
-      const q = await services.setConditions(question, req.cookies[String(question.id)]);
+      const q = await services.setConditions(question, req.cookies[String(question.id)], req.user);
       topicsWithConditions.push(q);
     }
     for(const question of news){
-      const q = await services.setConditions(question, req.cookies[String(question.id)]);
+      const q = await services.setConditions(question, req.cookies[String(question.id)], req.user);
       newsWithConditions.push(q);
     }
+
+    if(req.cookies.hasVisited == null){
+      req.flash('info', 'Enquetia（アンケティア）へようこそ！アンケティアは誰でも匿名でアンケートの作成・回答ができるサービスです。まずは気になるアンケートに投票してみましょう！');
+    }
+    res.cookie('hasVisited', '1', {maxAge: 1000*60*60*24*7, httpOnly: true, sameSite: 'Lax'});
 
     return res.render('enquetes/list.pug', {
       url: req.url,
@@ -61,11 +65,6 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// indexページでエラーが発生したとき用のルーティング
-router.get('/', (req, res, next) => {
-  return res.render('enquetes/list.pug');
-});
-
 
 /**
  * GET /enquetes/add
@@ -73,8 +72,8 @@ router.get('/', (req, res, next) => {
  * アンケート作成フォームを表示
  */
 router.get('/add', (req, res) => {
-  const passedVariable = req.session.question != undefined ? req.session.question : {};
-  req.session.question = null;
+  const passedVariable = req.cookies.question || {};
+  res.clearCookie('question');
 
   res.render('enquetes/form.pug', {
     url: req.url,
@@ -92,17 +91,19 @@ router.get('/add', (req, res) => {
  */
 router.post('/add', validation.checkQuestion,
   (req, res, next) => {
-    req.session.question = null;
+    res.clearCookie('question');
 
     // validationエラーを処理
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      req.session.question = req.body;
+      console.log(errors);
+      req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+      res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
       return res.redirect(`${req.baseUrl}/add`);
     }
 
     // 確認画面にリダイレクト
-    req.session.question = req.body;
+    res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
     return res.redirect(`${req.baseUrl}/confirm`);
   }
 );
@@ -114,14 +115,14 @@ router.post('/add', validation.checkQuestion,
  * 入力内容確認画面を表示
  */
 router.get('/confirm', csrfProtection, (req, res, next) => {
-  const passedVariable = req.session.question != undefined ? req.session.question : undefined;
-  if(passedVariable === undefined || !Object.keys(passedVariable).length){
+  const passedVariable = req.cookies.question;
+  if(passedVariable == null || !Object.keys(passedVariable).length){
     req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
-    req.session.question = req.body;
+    res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
     return res.redirect(`${req.baseUrl}/add`);
   }
 
-  if(!req.session.profile) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で変更・削除できません。');
+  if(!req.user) req.flash('warn', '現在ログインしていません。この状態で作成したアンケートは後で編集・削除できません。');
 
   res.render('enquetes/confirm.pug', {
     url: req.url,
@@ -164,12 +165,14 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
 router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
   async (req, res, next) => {
     try {
-      req.session.question = null;
+      res.clearCookie('question');
 
       // validationエラーを処理
       const errors = await validationResult(req);
       if (!errors.isEmpty()) {
-        req.session.question = req.body;
+        console.log(errors);
+        req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+        res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
         return res.redirect(`${req.baseUrl}/add`);
       }
 
@@ -178,14 +181,13 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
 
       const savedData = await models.questions.create(question, answers);
 
-      //services.images.createTwitterCard(savedData, answers, (err) => {
       await services.images.createTwitterCard(savedData.id);
       req.flash('info', 'アンケートが作成されました。アンケート右上のツイッターアイコンから、作成したアンケートについてツイートできます。');
       return res.redirect(`${req.baseUrl}/${savedData.id}`);
     } catch (e) {
       console.log(e);
       req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
-      req.session.question = req.body;
+      res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
       return res.redirect(`${req.baseUrl}/confirm`);
     }
   }
@@ -200,7 +202,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
 router.get('/:question_id', async (req, res, next) => {
   try {
     const question = await models.questions.findById(parseInt(req.params.question_id));
-    const questionWithConditions = await services.setConditions(question, req.cookies[req.params.question_id]);
+    const questionWithConditions = await services.setConditions(question, req.cookies[req.params.question_id], req.user);
 
     res.render('enquetes/view.pug', {
       url: req.url,
@@ -227,8 +229,7 @@ router.post('/:question_id', async (req, res, next) => {
 
     // 投票結果をDBに保存
     const savedData = await models.questions.vote(vote);
-    const expired_at = new Date(parseInt(req.body.question_id, 10));
-    res.cookie(req.body.question_id, '1', {expires: expired_at, httpOnly: true, sameSite: 'Lax'});
+    res.cookie(req.body.question_id, '1', {maxAge: 1000*60*60*24*7, httpOnly: true, sameSite: 'Lax'});
     req.flash('info', '投票に成功しました。アンケート右上のツイッターアイコンから、投票結果をツイートできます。');
 
     return res.redirect(`${req.url}/result`);
@@ -250,13 +251,11 @@ router.post('/:question_id', async (req, res, next) => {
 router.get('/:question_id/result', async (req, res, next) => {
   try {
     const question = await models.questions.findById(req.params.question_id);
-    question.count = question.answers.reduce((acc, cur) => {
-      return acc + cur.count;
-    }, 0);
+    const  questionWithConditions = await services.setConditions(question, req.cookies[String(question.id)], req.user);
     res.render('enquetes/result.pug', {
       url: req.url,
       action: 'アンケート結果',
-      question: question,
+      question: questionWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {
@@ -265,74 +264,6 @@ router.get('/:question_id/result', async (req, res, next) => {
     next(e);
   }
 });
-
-
-
-
-
-/**
- * GET /enquetes/:id/edit
- *
- * Display a question for editing.
- */
-router.get('/:question/edit', (req, res, next) => {
-  models.questions.read(req.params.question, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.render('questions/form.pug', {
-      question: entity,
-      action: 'Edit',
-    });
-  });
-});
-
-/**
- * POST /questions/:id/edit
- *
- * Update a question.
- */
-router.post(
-  '/:question/edit',
-  images.multer.single('image'),
-  images.sendUploadToGCS,
-  (req, res, next) => {
-    const data = req.body;
-
-    // Was an image uploaded? If so, we'll use its public URL
-    // in cloud storage.
-    if (req.file && req.file.cloudStoragePublicUrl) {
-      req.body.imageUrl = req.file.cloudStoragePublicUrl;
-    }
-
-    models.questions.update(req.params.question, data, (err, savedData) => {
-      if (err) {
-        next(err);
-        return;
-      }
-      return res.redirect(`${req.baseUrl}/${savedData.id}`);
-    });
-  }
-);
-
-/**
- * GET /questions/:id/delete
- *
- * Delete a question.
- */
-router.get('/:question/delete', (req, res, next) => {
-  models.questions.delete(req.params.question, err => {
-    if (err) {
-      next(err);
-      return;
-    }
-    return res.redirect(req.baseUrl);
-  });
-});
-
-
-
 
 
 /**

@@ -1,5 +1,5 @@
 extends ../base.pug
-include _card
+include ../_card
 
 block head
   meta(name="description", content=question.description || "「" + question.title + "」の投票画面です。皆さんの投票をお待ちしています！")
@@ -11,17 +11,18 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  nav(aria-label="breadcrumb")
-    ol.breadcrumb
-      li.breadcrumb-item
-        a(href="/") Home
-      li.breadcrumb-item.active(aria-current="page") アンケート投票
-  .card.bg-info-custom
-    .card-header.bg-light-custom
-      h3.mb-0 #{action}
-    .card-body.pb-0
-      if question
-        +card(question)
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
+    nav(aria-label="breadcrumb")
+      ol.breadcrumb
+        li.breadcrumb-item
+          a(href="/") Home
+        li.breadcrumb-item.active(aria-current="page") アンケート投票
+    .card.bg-info-custom
+      .card-header.bg-light-custom
+        h3.mb-0 #{action}
+      .card-body
+        if question
+          +card(question)
 
 block script
   script(type='text/javascript', src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js")

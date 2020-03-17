@@ -32,7 +32,7 @@ async function findByParentId(question_id) {
   try{
     const q = ds
       .createQuery([table])
-      .filter('question_id', question_id)
+      .filter('question_id', Number(question_id))
       .order("sort_order");
 
     const [entities, info] = await ds.runQuery(q);
@@ -70,10 +70,31 @@ async function update(ids, data){
   }
 }
 
+async function _delete(ids){
+  try {
+    return await commons._delete(ids, table);
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
+async function deleteByQuestionId(question_id) {
+  try {
+    const answers = await findByParentId(question_id);
+    await _delete(answers.map(answer => Number(answer.id)));
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
 module.exports = {
   create: create,
   findByParentId: findByParentId,
   read: read,
   getVoteCounts: getVoteCounts,
   update: update,
+  _delete: _delete,
+  deleteByQuestionId: deleteByQuestionId,
 };

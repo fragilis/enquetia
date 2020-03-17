@@ -1,21 +1,8 @@
-// Copyright 2017, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const model = require('../../models/model-datastore');
+const models = require('../../models/model-datastore');
 
 const router = express.Router();
 
@@ -23,94 +10,49 @@ const router = express.Router();
 router.use(bodyParser.json());
 
 /**
- * GET /api/enquetes
+ * POST /api/addToFavorite
  *
- * Retrieve a page of enquetes (up to ten at a time).
+ * アンケートをお気に入りに追加
  */
-router.get('/', (req, res, next) => {
-  model.list(10, req.query.pageToken, (err, entities, cursor) => {
-    if (err) {
-      next(err);
-      return;
+router.post('/addToFavorite', async (req, res, next) => {
+  try {
+    if(req.user == null) throw new Error('User is not logged in.');
+    if(req.body.question_id == null) throw new Error('Bad request.');
+
+    const favoriteEntity = await models.favorites.find(req.user.id, req.body.question_id);
+    if(favoriteEntity.length){
+      return res.json({
+        favorite: favoriteEntity,
+      });
     }
-    res.json({
-      items: entities,
-      nextPageToken: cursor,
+
+    const favorite = {
+      user_id: parseInt(req.user.id),
+      question_id: parseInt(req.body.question_id),
+    };
+    const entity = await models.favorites.create(favorite);
+    return res.json({
+      favorite: entity,
     });
-  });
+  } catch (e){
+    console.log(e);
+    return next();
+  }
 });
 
-/**
- * POST /api/enquetes
- *
- * Create a new enquete.
- */
-router.post('/', (req, res, next) => {
-  model.create(req.body, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
-});
-
-/**
- * GET /api/enquetes/:id
- *
- * Retrieve a enquete.
- */
-router.get('/:enquete', (req, res, next) => {
-  model.read(req.params.enquete, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
-});
-
-/**
- * PUT /api/enquetes/:id
- *
- * Update a enquete.
- */
-router.put('/:enquete', (req, res, next) => {
-  model.update(req.params.enquete, req.body, (err, entity) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.json(entity);
-  });
-});
-
-/**
- * DELETE /api/enquetes/:id
- *
- * Delete a enquete.
- */
-router.delete('/:enquete', (req, res, next) => {
-  model.delete(req.params.enquete, err => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.status(200).send('OK');
-  });
-});
-
-/**
- * Errors on "/api/enquetes/*" routes.
- */
-router.use((err, req, res, next) => {
-  // Format error and forward to generic error handler for logging and
-  // responding to the request
-  err.response = {
-    message: err.message,
-    internalCode: err.code,
-  };
-  next(err);
+router.post('/removeFromFavorite', async (req, res, next) => {
+  try {
+    if(req.user == null) throw new Error('User is not logged in.');
+    if(req.body.question_id == null) throw new Error('Bad request.');
+    const entities = await models.favorites.find(parseInt(req.user.id), parseInt(req.body.question_id));
+    await models.favorites._delete(entities.map(entity => entity.id));
+    return res.json({
+      entity: entities,
+    });
+  } catch (e){
+    console.log(e);
+    return next();
+  }
 });
 
 module.exports = router;

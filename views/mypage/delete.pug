@@ -1,11 +1,11 @@
 extends ../base.pug
 
 block head
-  meta(name="description", content="作成するアンケートの確認画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(name="description", content="作成したアンケートの削除画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
   meta(name="twitter:card", content="summary")
   meta(property="og:type", content="website")
-  meta(property="og:title", content="アンケート確認画面 | Enquetia (アンケティア) - みんなでアンケしよう！")
-  meta(property="og:description", content="作成するアンケートの確認画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(property="og:title", content="アンケート削除画面 | Enquetia (アンケティア) - みんなでアンケしよう！")
+  meta(property="og:description", content="作成したアンケートの削除画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
   meta(property="og:image", content="https://enquetia.net/img/logo.png")
   meta(property="og:image:alt", content="enquetia")
 
@@ -15,12 +15,11 @@ block content
       .card-header.bg-light-custom
         h3.mb-0 #{action}
       .card-body.p-4
-        p 以下のようなアンケートを作成します。<br />よろしいですか？
+        p このアンケートを削除します。<br />よろしいですか？
         form(method="POST", novalidate)
           input.form-control(type="hidden", name="period_hours", id="period_hours", value=question.period_hours)
           input.form-control(type="hidden", name="answer_type", id="answer_type", value=question.answer_type)
           input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
-          input.form-control(type="hidden", name="_csrf", value=csrfToken)
           .card.m-0.m-sm-4.mb-5
             .card-header.clearfix #{question.title}
               input.form-control-plaintext(type="hidden", name="title", id="title", value=question.title)
@@ -65,15 +64,21 @@ block content
                 - publish_status += "トップページ非公開"
 
               p.card-text.mb-0.clearfix
-                small.text-muted 〇〇票 #{time_left} #{publish_status}
-                  a.ml-2 結果を見る
+                small.text-muted.mr-1 #{question.count}票
+                small.text-muted.mr-1 #{publish_status} 
+                if question.is_expired || question.is_voted
+                  small.mr-1(style="color:red;") #{time_left}
+                else
+                  small.text-muted.mr-1 #{time_left}
+                a.ml-2(href="/" + question.id + "/result")
+                  small 結果を見る
                 button.btn.btn-outline-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled) 投票する
               .clearfix
                 button.btn.btn-outline-primary.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", disabled) 投票する
           .row.mt-3
             .col.clearfix
-              button.btn.btn-danger.mt-2.ml-2.float-right(type="submit", name="modify") 修正する
-              button.btn.btn-primary.mt-2.ml-2.float-right(type="submit", name="create", onclick="createEnquete(this)") 作成する
+              button.btn.btn-danger.mt-2.ml-2.float-right(type="submit", name="destroy") 削除する
+              button.btn.btn-secondary.mt-2.ml-2.float-right(type="submit", name="cancel") キャンセル
 
 block script
   script(type='text/javascript', src='/js/confirm.js', id='question', data-json=JSON.stringify(question))

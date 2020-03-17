@@ -1,18 +1,19 @@
 extends ../base.pug
 
 block head
-  meta(name="description", content="アンケートの作成画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(name="description", content="アンケートの編集画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
   meta(name="twitter:card", content="summary")
   meta(property="og:type", content="website")
-  meta(property="og:title", content="アンケート作成画面 | Enquetia (アンケティア) - みんなでアンケしよう！")
-  meta(property="og:description", content="アンケートの作成画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
+  meta(property="og:title", content="アンケート編集画面 | Enquetia (アンケティア) - みんなでアンケしよう！")
+  meta(property="og:description", content="アンケートの編集画面です。Enquetia (アンケティア) は、匿名でアンケートの作成・回答ができるサービスです。選択項目は最大" + maxItemCount + "個まで設定でき、複数選択にも対応しています。気になるアレコレを気軽にアンケしよう！")
   meta(property="og:image", content="https://enquetia.net/img/logo.png")
   meta(property="og:image:alt", content="enquetia")
 
 block content
   main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
     h3 #{action}
-    form.needs-validation.mt-4(method="POST", novalidate)
+    form.needs-validation.mt-4(action=url+"/edit", method="POST", novalidate)
+      input.form-control(type="hidden", name="_csrf", value=csrfToken)
       .form-group
         label(for="content") 質問
         span.badge.badge-pill.badge-danger 必須
@@ -24,9 +25,12 @@ block content
         .invalid-feedback 400文字以内で入力してください。
       .form-group.clearfix#items
         label(for="answer") 回答
-        span.badge.badge-pill.badge-danger 必須
-        button.btn.btn-outline-primary.mt-n2.float-right#add_item(type="button") 選択肢を追加
-        span ※選択肢は#{maxItemCount}個までです。
+        if question.answers != null && question.answers.length
+          each answer, index in question.answers
+            .input-group.mb-3
+              .input-group-prepend
+                span.input-group-text 選択肢#{index+1}
+              span.form-control=answer
       .form-group
         label(for="answer_type") 回答形式
         span.badge.badge-pill.badge-danger 必須
@@ -45,12 +49,17 @@ block content
         label(for="period_hours") 回答期間
         span.badge.badge-pill.badge-danger 必須
         i.fa.fa-fw.fa-question-circle.ml-1(data-container="body", data-toggle="tooltip", data-trigger="hover", data-placement="right", style="width:1rem;height:1rem;", data-html="true", data-content="回答を受け付ける期間を設定します。")
+        - 
+          options = [{value: 0, text: "今すぐ終了する"},
+                     {value: 6, text: "6時間"},
+                     {value: 12, text: "12時間"},
+                     {value: 24, text: "1日間"},
+                     {value: 48, text: "2日間"},
+                     {value: 72, text: "3日間"}]
+
         select.form-control(name="period_hours", id="period_hours", value=question.period_hours, required)
-          option(value="6", selected=(question.period_hours == 6)) 6時間
-          option(value="12", selected=(question.period_hours == 12)) 12時間
-          option(value="24", selected=(question.period_hours == 24)) 1日間
-          option(value="48", selected=(question.period_hours == 48)) 2日間
-          option(value="72", selected=(question.period_hours == 72)) 3日間
+          each option, index in options
+            option(value=option.value, selected=(question.period_hours == option.value))=option.text
         .invalid-feedback どれか1つを選択してください。
       .form-group
         label(for="answer_type") トップページに公開
@@ -62,7 +71,8 @@ block content
         .invalid-feedback どれか1つを選択してください。
       .row
         .col
-          button.btn.btn-primary.float-right.mt-2(type="submit") 入力内容を確認
+          button.btn.btn-primary.float-right.mt-2(type="submit") 修正する
 
-block script
-  script(type='text/javascript', src='/js/form.js', id='question', data-json=JSON.stringify({question: question, maxItemCount: maxItemCount}))
+//-
+  block script
+    script(type='text/javascript', src='/js/form.js', id='question', data-json=JSON.stringify({question: question, maxItemCount: maxItemCount}))
