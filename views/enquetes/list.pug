@@ -13,45 +13,53 @@ block head
 block content
   .d-block.d-sm-none.w-100.mb-3.mt-3
     a.btn.btn-block.btn-primary(href="/add") アンケートを作る
-  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3(role="main", style="min-height: 90vh;")
-    .card.mb-4.bg-info-custom
-      .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
-        h3.mb-0 今話題のアンケート
-          i.fas.fa-bars.float-right
-      .collapse.show#topics
-        .card-body
-          if topics != null && topics.length
-            each question, index in topics
-              if question.is_voted || question.is_expired
-                +result(question)
-              else
-                +card(question)
-              if index != topics.length-1
-                hr.mt-4.mb-4.mt-sm-5.mb-sm-5
-          else
-            .card.m-0.m-sm-4
-              .card-body
-                p.card-text.mb-0 アンケートはありません。
 
-    hr.mb-4.mt-4.mb-sm-5.mt-sm-5
-    .card.bg-info-custom
-      .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
-        h3.mb-0 最新アンケート
-          i.fas.fa-bars.float-right
-      .collapse.show#news
-        .card-body
-          if news != null && news.length
-            each question, index in news
-              if question.is_voted || question.is_expired
-                +result(question)
-              else
-                +card(question)
-              if index != news.length-1
-                hr.mt-4.mb-4.mt-sm-5.mb-sm-5
-          else
-            .card.m-0.m-sm-4
-              .card-body
-                p.card-text.mb-0 アンケートはありません。
+  .container
+    .row
+      .col.p-0.pl-sm-3.pr-sm-3
+        ul.nav.nav-pills.nav-fill.mt-2.mt-sm-4.ml-sm-3.mr-sm-3.mb-2.border.rounded(style="background-color: white;")
+          li.nav-item
+            a.nav-link.active#pills-topics-tab(data-toggle="pill", href="#pills-topics", role="tab", aria-controls="pills-topics", aria-selected="true") 今話題のアンケート
+          li.nav-item
+            a.nav-link#pills-news-tab(data-toggle="pill", href="#pills-news", role="tab", aria-controls="pills-news", aria-selected="false") 最新アンケート
+
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3.border.rounded(role="main", style="min-height: 90vh;")
+    .tab-content#pills-tabContent
+      .tab-pane.fade.show.active#pills-topics(role="tabpanel", aria-labelledby="pills-topics-tab")
+        .card.mb-4.bg-info-custom
+          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+            h3.mb-0 今話題のアンケート
+          .card-body
+            if topics != null && topics.length
+              each question, index in topics
+                if question.is_voted || question.is_expired
+                  +result(question)
+                else
+                  +card(question)
+                if index != topics.length-1
+                  hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+            else
+              .card.m-0.m-sm-4
+                .card-body
+                  p.card-text.mb-0 アンケートはありません。
+
+      .tab-pane.fade#pills-news(role="tabpanel", aria-labelledby="pills-news-tab")
+        .card.bg-info-custom
+          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
+            h3.mb-0 最新アンケート
+          .card-body
+            if news != null && news.length
+              each question, index in news
+                if question.is_voted || question.is_expired
+                  +result(question)
+                else
+                  +card(question)
+                if index != news.length-1
+                  hr.mt-4.mb-4.mt-sm-5.mb-sm-5
+            else
+              .card.m-0.m-sm-4
+                .card-body
+                  p.card-text.mb-0 アンケートはありません。
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
