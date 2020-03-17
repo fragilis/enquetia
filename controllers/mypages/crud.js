@@ -121,14 +121,11 @@ router.get('/:question_id', csrfProtection, async (req, res, next) => {
 router.post('/:question_id/edit', validation.checkQuestionModification, parseForm, csrfProtection,
   async (req, res, next) => {
     try {
-      res.clearCookie('question');
-
       // validationエラーを処理
       const errors = await validationResult(req);
       if (!errors.isEmpty()) {
         console.log(errors);
         req.flash('error', 'アンケートを修正できませんでした。時間を空けて再度お試しください。');
-        res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
         return res.redirect(`${req.baseUrl}/${req.params.question_id}`);
       }
 
@@ -158,7 +155,6 @@ router.post('/:question_id/edit', validation.checkQuestionModification, parseFor
     } catch (e) {
       console.log(e);
       req.flash('error', 'アンケートを修正できませんでした。時間を空けて再度お試しください。');
-      res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
       return res.redirect(`${req.baseUrl}/${req.params.question_id}`);
     }
   }
