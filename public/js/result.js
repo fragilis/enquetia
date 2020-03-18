@@ -1,4 +1,4 @@
-$(function () {
+function createChart(){
   const $results = $('canvas.result');
   $results.each((index, result) => {
     const ctx = result.getContext("2d");
@@ -45,4 +45,8 @@ $(function () {
       }
     });
   });
+}
+
+$(function () {
+  createChart();
 })

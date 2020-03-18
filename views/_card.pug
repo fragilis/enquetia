@@ -2,7 +2,7 @@ mixin card(question)
   form.needs-validation(method="POST", action="/" + question.id, novalidate)
     .card.enquete.m-0.m-sm-4(name=question.id)
       .card-header.clearfix #{question.title}
-        a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
+        a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
           img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
         if profile
           if question.is_favorite
@@ -62,14 +62,14 @@ mixin card(question)
             - publish_status += "トップページ非公開"
 
         p.card-text.mb-0.clearfix
-          small.text-muted.mr-1 #{question.count}票
+          small.text-muted.mr-1 投票数：#{question.count}票
           small.text-muted.mr-1 #{publish_status} 
           if question.is_expired || question.is_voted
             small.mr-1(style="color:red;") #{time_left}
           else
             small.text-muted.mr-1 #{time_left}
           a.ml-2(href="javascript:void(0)", onclick="showResult(this)")
-            small 結果を見る
+            small 結果画面を表示
           button.btn.btn-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled=question.is_expired || question.is_voted) 投票する
         .clearfix
           button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", disabled=question.is_expired || question.is_voted) 投票する
@@ -81,7 +81,7 @@ mixin editableCard(question)
   form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
     .card.enquete.m-0.m-sm-4(name=question.id)
       .card-header.clearfix #{question.title}
-        a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
+        a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
           img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
         if profile
           if question.is_favorite
@@ -141,14 +141,14 @@ mixin editableCard(question)
             - publish_status += "トップページ非公開"
 
         p.card-text.mb-0.clearfix
-          small.text-muted.mr-1 #{question.count}票
+          small.text-muted.mr-1 投票数：#{question.count}票
           small.text-muted.mr-1 #{publish_status} 
           if question.is_expired || question.is_voted
             small.mr-1(style="color:red;") #{time_left}
           else
             small.text-muted.mr-1 #{time_left}
           a.ml-2(hrefd="javascript:void(0)", onclick="showResult(this)")
-            small 結果を見る
+            small 結果画面を表示
           button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
           button.btn.btn-info.btn-sm.float-right.d-none.d-sm-block(type="submit", name="modify") 修正する
         .clearfix
@@ -161,7 +161,7 @@ mixin editableCard(question)
 mixin result(question)
   .card.m-0.m-sm-4(name=question.id)
     .card-header.clearfix #{question.title}
-      a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
+      a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
         img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
       if profile
         if question.is_favorite
@@ -205,20 +205,20 @@ mixin result(question)
           - publish_status += "トップページ非公開"
 
       p.card-text.mb-0.clearfix
-        small.text-muted.mr-1 #{question.count}票
+        small.text-muted.mr-1 投票数：#{question.count}票
         small.text-muted.mr-1 #{publish_status} 
         if question.is_expired || question.is_voted
           small.mr-1(style="color:red;") #{time_left}
         else
           small.text-muted.mr-1 #{time_left}
         a.ml-2(href="javascript:void(0)", onclick="showVote(this)")
-          small 投票する
+          small 投票画面に移動
 
 
 mixin editableResult(question)
   .card.m-0.m-sm-4(name=question.id)
     .card-header.clearfix #{question.title}
-      a.float-right#twitter(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
+      a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
         img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
       if profile
         if question.is_favorite
@@ -262,14 +262,14 @@ mixin editableResult(question)
           - publish_status += "トップページ非公開"
 
       p.card-text.mb-0.clearfix
-        small.text-muted.mr-1 #{question.count}票
+        small.text-muted.mr-1 投票数：#{question.count}票
         small.text-muted.mr-1 #{publish_status} 
         if question.is_expired || question.is_voted
           small.mr-1(style="color:red;") #{time_left}
         else
           small.text-muted.mr-1 #{time_left}
         a.ml-2(href="javascript: void(0)", onclick="showVote(this)")
-          small 投票する
+          small 投票画面に移動
 
       form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
         button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する

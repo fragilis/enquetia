@@ -32,8 +32,9 @@ router.use((req, res, next) => {
  */
 router.get('/', async (req, res, next) => {
   try{
-    const enquetes = await models.questions.myQuestions(Number(req.user.id), 10, req.query.enquetesToken);
-    const favorites = await models.questions.myFavorites(Number(req.user.id), 10, req.query.favoritesToken);
+    const perPage = config.get('ENQUETES_PER_PAGE');
+    const [enquetes, enquetesToken] = await models.questions.myQuestions(Number(req.user.id), perPage, req.query.enquetesToken);
+    const [favorites, favoritesToken] = await models.questions.myFavorites(Number(req.user.id), perPage, req.query.favoritesToken);
 
     const enquetesWithConditions = [];
     const favoritesWithConditions = [];
@@ -51,6 +52,8 @@ router.get('/', async (req, res, next) => {
       url: `${req.baseUrl}${req.url}`,
       enquetes: enquetesWithConditions,
       favorites: favoritesWithConditions,
+      enquetesToken: enquetesToken,
+      favoritesToken: favoritesToken,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {

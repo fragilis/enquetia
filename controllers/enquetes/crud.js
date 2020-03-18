@@ -32,8 +32,9 @@ router.use((req, res, next) => {
  */
 router.get('/', async (req, res, next) => {
   try{
-    const topics = await models.questions.popular(5, req.query.pageToken);
-    const news = await models.questions.latest(5, req.query.pageToken);
+    const perPage = config.get('ENQUETES_PER_PAGE');
+    const [topics, topicsToken] = await models.questions.popular(perPage);
+    const [news, newsToken] = await models.questions.latest(perPage);
 
     const topicsWithConditions = [];
     const newsWithConditions = [];
@@ -56,6 +57,8 @@ router.get('/', async (req, res, next) => {
       url: req.url,
       topics: topicsWithConditions,
       news: newsWithConditions,
+      topicsToken: topicsToken,
+      newsToken: newsToken,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {

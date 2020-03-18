@@ -27,10 +27,10 @@ block content
     .tab-content#pills-tabContent
       .tab-pane.fade.show.active#pills-topics(role="tabpanel", aria-labelledby="pills-topics-tab")
         .card.mb-4.bg-info-custom
-          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#topics", aria-expanded="true", aria-controls="topics")
+          .card-header.bg-light-custom
             h3.mb-0 今話題のアンケート
-          .card-body
-            if topics != null && topics.length
+          if topics != null && topics.length
+            .card-body
               each question, index in topics
                 .enqueteUnit
                   if question.is_voted || question.is_expired
@@ -45,17 +45,23 @@ block content
                       +card(question)
                 if index != topics.length-1
                   hr.mt-4.mb-4.mt-sm-5.mb-sm-5
-            else
-              .card.m-0.m-sm-4
-                .card-body
-                  p.card-text.mb-0 アンケートはありません。
+            if topicsToken
+              .card-footer.bg-light-custom
+                button.btn.btn-block.btn-outline-primary.nextButton(type="button", onclick="getNextTopics()") 続きを見る
+                button.btn.btn-block.btn-primary.mt-0.spinnerButton(type="button", disabled)
+                  span.spinner-border.spinner-border-sm.mr-2(role="status", aria-hidden="true")
+                  | Loading...
+          else
+            .card.m-0.m-sm-4
+              .card-body
+                p.card-text.mb-0 アンケートはありません。
 
       .tab-pane.fade#pills-news(role="tabpanel", aria-labelledby="pills-news-tab")
         .card.bg-info-custom
-          .card-header.bg-light-custom(type="button", data-toggle="collapse", href="#news", aria-expanded="true", aria-controls="news")
+          .card-header.bg-light-custom
             h3.mb-0 最新アンケート
-          .card-body
-            if news != null && news.length
+          if news != null && news.length
+            .card-body
               each question, index in news
                 .enqueteUnit
                   if question.is_voted || question.is_expired
@@ -70,13 +76,20 @@ block content
                       +card(question)
                 if index != news.length-1
                   hr.mt-4.mb-4.mt-sm-5.mb-sm-5
-            else
-              .card.m-0.m-sm-4
-                .card-body
-                  p.card-text.mb-0 アンケートはありません。
+            if newsToken
+              .card-footer.bg-light-custom
+                button.btn.btn-block.btn-outline-primary.nextButton(type="button", onclick="getNextNews()") 続きを見る
+                button.btn.btn-block.btn-primary.mt-0.spinnerButton(type="button", disabled, style="display: none;")
+                  span.spinner-border.spinner-border-sm.mr-2(role="status", aria-hidden="true")
+                  | Loading...
+          else
+            .card.m-0.m-sm-4
+              .card-body
+                p.card-text.mb-0 アンケートはありません。
 
 block script
   link(href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css', rel="stylesheet")
   script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
   script(type='text/javascript', src='https://github.com/nagix/chartjs-plugin-colorschemes/releases/download/v0.2.0/chartjs-plugin-colorschemes.min.js')
   script(type='text/javascript', src='/js/result.js', id='question', data-json=JSON.stringify(question))
+  script(type='text/javascript', src='/js/list.js', id='tokens', data-json=JSON.stringify({topicsToken: topicsToken, newsToken: newsToken}))

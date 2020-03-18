@@ -18,9 +18,11 @@ async function popular(limit, token) {
       const question = await findById(question_id);
       questions.push(question);
     }
-    const topics = questions.slice(0, limit);
+    const startAt = token == null ? 0 : Number(token);
+    const hasMore = questions.length > startAt + limit ? startAt + limit : false;
+    const topics = questions.slice(startAt, startAt + limit);
 
-    return topics.sort((a, b) => {return b.count - a.count});
+    return [topics.sort((a, b) => {return b.count - a.count}), hasMore];
   } catch (e) {
     console.log(e);
     throw e;
@@ -37,6 +39,10 @@ async function latest(limit, token) {
       .start(token);
 
     const [entities, info] = await ds.runQuery(q);
+    const hasMore =
+      info.moreResults !== Datastore.NO_MORE_RESULTS
+        ? info.endCursor
+        : false;
     /*
     const entities_filtered =  entities.filter(async (e) => {
       const deadline = await e.period_hours === -1 ? null : (new Date(e.published_at.getTime())).setHours(e.published_at.getHours() + e.period_hours);
@@ -50,7 +56,7 @@ async function latest(limit, token) {
       questions.push(question);
     }
 
-    return questions;
+    return [questions, hasMore];
   } catch (e) {
     console.log(e);
     throw e;
@@ -178,13 +184,18 @@ async function myQuestions(user_id, limit, token){
 
     const [entities, info] = await ds.runQuery(q);
 
+    const hasMore =
+      info.moreResults !== Datastore.NO_MORE_RESULTS
+        ? info.endCursor
+        : false;
+
     const questions = [];
     for(let entity of entities.map(commons.fromDatastore)){
       const question = await findById(entity.id);
       questions.push(question);
     }
 
-    return questions;
+    return [questions, hasMore];
   }catch (e) {
     console.log(e);
     throw e;
@@ -201,8 +212,11 @@ async function myFavorites(user_id, limit, token){
       const question = await findById(entity.id);
       questions.push(question);
     }
+    const startAt = token == null ? 0 : Number(token);
+    const hasMore = questions.length > startAt + limit ? startAt + limit : false;
+    const favorites = questions.slice(startAt, startAt + limit);
 
-    return questions;
+    return [favorites, hasMore];
   }catch (e) {
     console.log(e);
     throw e;

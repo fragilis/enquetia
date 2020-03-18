@@ -3,8 +3,6 @@
 function addToFavorite(question_id){
   const $card = $('.card[name="' + question_id + '"]')
   const $navbar = $('.navbar');
-  console.log($card)
-  console.log($card.find('.favoriteButton'))
   let dom = "";
   $.ajax({
     url: '/api/addToFavorite',
