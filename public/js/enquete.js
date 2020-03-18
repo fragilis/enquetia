@@ -1,21 +1,71 @@
 'use strict';
 
-function addValidationToForms(){
-  $('.needs-validation').on('submit', function(event){
-    if(this.checkValidity() === false){
-      event.preventDefault();
-      event.stopPropagation();
-      $(this).addClass('was-validated');
-    }
-  });
-}
-
 $(function () {
   addValidationToForms();
 })
 
+function addValidationToForms(){
+  $('.needs-validation.vote').on('submit', function(event){
+
+    event.preventDefault();
+    event.stopPropagation();
+    if(this.checkValidity() === false){
+      $(this).addClass('was-validated');
+    } else {
+      const question_id = $(this).find('.card.enquete').attr('name');
+      const answer_ids = [];
+      $(this).find('fieldset input:checked').each(function(){
+        answer_ids.push($(this).val());
+      });
+      voteTo(question_id, answer_ids);
+    }
+  });
+}
+
+
+function voteTo(question_id, answer_ids){
+  const $navbar = $('.navbar');
+  let dom = "";
+  $.ajax({
+    url: '/api/voteTo',
+    type: 'POST',
+    data: {
+      'question_id': question_id,
+      'answer': answer_ids,
+    },
+    dataType: 'html',
+  }).done((data) => {
+    const $enqueteUnit = $('.card[name="' + question_id + '"]').closest('.enqueteUnit');
+    $enqueteUnit.replaceWith($(data).find('.enqueteUnit'));
+    createChart();
+
+    dom += '<div class="alert alert-info alert-dismissible fade show mb-0">';
+    dom += '<strong>Info:</strong>';
+    dom += '<span class="ml-2">'
+    dom += '投票が完了しました。'
+    dom += '</span>';
+    dom += '<button class="close" data-dismiss="alert" aria-label="Close">';
+    dom += '<span aria-hidden="true">&times;</span>';
+    dom += '</button>';
+    dom += '</div>';
+  }).fail((data) => {
+    dom += '<div class="alert alert-danger alert-dismissible fade show mb-0">';
+    dom += '<strong>Error:</strong>';
+    dom += '<span class="ml-2">'
+    dom += '投票に失敗しました。時間を空けて再度お試しください。'
+    dom += '</span>';
+    dom += '<button class="close" data-dismiss="alert" aria-label="Close">';
+    dom += '<span aria-hidden="true">&times;</span>';
+    dom += '</button>';
+    dom += '</div>';
+  }).always((data) => {
+    $navbar.after(dom);
+  });
+}
+
+
 function addToFavorite(question_id){
-  const $card = $('.card[name="' + question_id + '"]')
+  const $card = $('.card[name="' + question_id + '"]');
   const $navbar = $('.navbar');
   let dom = "";
   $.ajax({
@@ -50,11 +100,10 @@ function addToFavorite(question_id){
   });
 }
 
+
 function removeFromFavorite(question_id){
-  const $card = $('.card[name="' + question_id + '"]')
+  const $card = $('.card[name="' + question_id + '"]');
   const  $navbar = $('.navbar');
-  console.log($card)
-  console.log($card.find('.favoriteButton'))
   let dom = "";
   $.ajax({
     url: '/api/removeFromFavorite',

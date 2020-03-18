@@ -188,4 +188,26 @@ router.post('/getNextFavorites', async (req, res, next) => {
 });
 
 
+/**
+ * POST /api/voteTo
+ *
+ * アンケートをお気に入りに追加
+ */
+router.post('/voteTo', async (req, res, next) => {
+  try {
+    if(req.body.question_id == null || req.body.answer == null) throw new Error('Bad request.');
+    if(req.cookies[String(req.body.question_id)]) throw new Error('Have already voted to question: ', req.body.question_id);
+
+    const vote = await services.setVoteValues(req.body);
+    const savedData = await models.questions.vote(vote);
+    res.cookie(req.body.question_id, '1', {maxAge: 1000*60*60*24*7, httpOnly: true, sameSite: 'Lax'});
+
+    return res.redirect(`/${req.body.question_id}/result`);
+  } catch (e){
+    console.log(e);
+    return next();
+  }
+});
+
+
 module.exports = router;

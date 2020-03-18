@@ -1,5 +1,5 @@
 mixin card(question)
-  form.needs-validation(method="POST", action="/" + question.id, novalidate)
+  form.needs-validation.vote(method="POST", action="/" + question.id, novalidate)
     .card.enquete.m-0.m-sm-4(name=question.id)
       .card-header.clearfix #{question.title}
         a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
