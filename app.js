@@ -66,15 +66,15 @@ const sessionConfig = {
   }),
 };
 
-// flash
-app.use(flash());
-
 const j = schedule.scheduleJob('*/10 * * * *', function() {
   cron.refreshVotes();
 });
 
 app.use(session(sessionConfig));
 app.use(express.static('public'));
+
+// flash
+app.use(flash());
 
 // OAuth
 app.use(passport.initialize());
