@@ -69,7 +69,7 @@ mixin card(question)
           else
             small.text-muted.mr-1 #{time_left}
           a.ml-2(href="javascript:void(0)", onclick="showResult(this)")
-            small 結果画面を表示
+            small 結果を表示する
           button.btn.btn-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled=question.is_expired || question.is_voted) 投票する
         .clearfix
           button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", disabled=question.is_expired || question.is_voted) 投票する
@@ -148,7 +148,7 @@ mixin editableCard(question)
           else
             small.text-muted.mr-1 #{time_left}
           a.ml-2(hrefd="javascript:void(0)", onclick="showResult(this)")
-            small 結果画面を表示
+            small 結果を表示する
           button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
           button.btn.btn-info.btn-sm.float-right.d-none.d-sm-block(type="submit", name="modify") 修正する
         .clearfix
@@ -212,7 +212,7 @@ mixin result(question)
         else
           small.text-muted.mr-1 #{time_left}
         a.ml-2(href="javascript:void(0)", onclick="showVote(this)")
-          small 投票画面に移動
+          small 投票画面を表示する
 
 
 mixin editableResult(question)
@@ -269,7 +269,7 @@ mixin editableResult(question)
         else
           small.text-muted.mr-1 #{time_left}
         a.ml-2(href="javascript: void(0)", onclick="showVote(this)")
-          small 投票画面に移動
+          small 投票画面を表示する
 
       form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
         button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
