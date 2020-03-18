@@ -21,6 +21,7 @@ function getNextTopics(){
     $cardBody.append('<hr class="mt-4 mb-4 mt-sm-5 mb-sm-5">');
     $cardBody.append($(data).find('#pills-topics .card-body:first>*'));
     createChart();
+    addValidationToForms();
 
     if(topicsToken = $(data).filter('#tokens').data('json').topicsToken) $block.find('.nextButton').show();
     else $block.find('.card-footer').hide();
@@ -62,6 +63,7 @@ function getNextNews(){
     $cardBody.append('<hr class="mt-4 mb-4 mt-sm-5 mb-sm-5">');
     $cardBody.append($(data).find('#pills-news .card-body:first>*'));
     createChart();
+    addValidationToForms();
 
     if(newsToken = $(data).filter('#tokens').data('json').newsToken) $block.find('.nextButton').show();
     else $block.find('.card-footer').hide();

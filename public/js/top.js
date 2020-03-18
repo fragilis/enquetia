@@ -21,6 +21,7 @@ function getNextEnquetes(){
     $cardBody.append('<hr class="mt-4 mb-4 mt-sm-5 mb-sm-5">');
     $cardBody.append($(data).find('#pills-mine .card-body:first>*'));
     createChart();
+    addValidationToForms();
 
     if(enquetesToken = $(data).filter('#tokens').data('json').enquetesToken) $block.find('.nextButton').show();
     else $block.find('.card-footer').hide();
@@ -62,6 +63,7 @@ function getNextFavorites(){
     $cardBody.append('<hr class="mt-4 mb-4 mt-sm-5 mb-sm-5">');
     $cardBody.append($(data).find('#pills-favorites .card-body:first>*'));
     createChart();
+    addValidationToForms();
 
     if(favoritesToken = $(data).filter('#tokens').data('json').favoritesToken) $block.find('.nextButton').show();
     else $block.find('.card-footer').hide();

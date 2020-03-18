@@ -1,5 +1,19 @@
 'use strict';
 
+function addValidationToForms(){
+  $('.needs-validation').on('submit', function(event){
+    if(this.checkValidity() === false){
+      event.preventDefault();
+      event.stopPropagation();
+      $(this).addClass('was-validated');
+    }
+  });
+}
+
+$(function () {
+  addValidationToForms();
+})
+
 function addToFavorite(question_id){
   const $card = $('.card[name="' + question_id + '"]')
   const $navbar = $('.navbar');
