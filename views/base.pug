@@ -43,6 +43,8 @@ html(lang="jp")
             a(href=logout) ログアウト
           else
             a(href=login) Twitterでログイン
+        .d-block.d-sm-none.w-100(style="background-color: white;")
+          a.btn.btn-block.btn-outline-primary(href="/add") アンケートを作る
       if messages != null
         if messages.info
           .alert.alert-info.alert-dismissible.fade.show.mb-0
