@@ -48,7 +48,7 @@ block content
             if enquetesToken
               .card-footer.bg-light-custom
                 button.btn.btn-block.btn-outline-primary.nextButton(type="button", onclick="getNextEnquetes()") 続きを見る
-                button.btn.btn-block.btn-primary.mt-0.spinnerButton(type="button", disabled)
+                button.btn.btn-block.btn-primary.mt-0.spinnerButton(type="button", disabled, style="display: none;")
                   span.spinner-border.spinner-border-sm.mr-2(role="status", aria-hidden="true")
                   | Loading...
           else
