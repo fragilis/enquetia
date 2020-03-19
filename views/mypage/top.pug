@@ -35,14 +35,14 @@ block content
                 .enqueteUnit
                   if question.is_voted || question.is_expired
                     .result
-                      +result(question)
+                      +editableResult(question)
                     .vote(style="display: none;")
-                      +card(question)
+                      +editableCard(question)
                   else
                     .result(style="display: none;")
-                      +result(question)
+                      +editableResult(question)
                     .vote
-                      +card(question)
+                      +editableCard(question)
                 if index != enquetes.length-1
                   hr.mt-4.mb-4.mt-sm-5.mb-sm-5
             if enquetesToken
@@ -66,14 +66,14 @@ block content
                 .enqueteUnit
                   if question.is_voted || question.is_expired
                     .result
-                      +result(question)
+                      +editableResult(question)
                     .vote(style="display: none;")
-                      +card(question)
+                      +editableCard(question)
                   else
                     .result(style="display: none;")
-                      +result(question)
+                      +editableResult(question)
                     .vote
-                      +card(question)
+                      +editableCard(question)
                 if index != favorites.length-1
                   hr.mt-4.mb-4.mt-sm-5.mb-sm-5
             if favoritesToken
