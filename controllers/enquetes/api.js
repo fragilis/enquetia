@@ -8,7 +8,6 @@ const services = require('../../services/enquetes');
 const csurf = require('csurf');
 
 const csrfProtection = csurf({ cookie: true });
-const parseForm = bodyParser.urlencoded({ extended: false });
 
 const router = express.Router();
 

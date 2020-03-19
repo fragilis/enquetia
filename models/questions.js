@@ -12,7 +12,7 @@ const excludeFromIndexes = ['answer_type', 'count', 'description', 'period_hours
 
 async function popular(limit, token) {
   try{
-    const latestVotes = await votes.latest(token);
+    const latestVotes = await votes.latest();
     const questions = [];
     for(let question_id of latestVotes.map(vote => vote.question_id)){
       const question = await findById(question_id);
