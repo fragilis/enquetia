@@ -74,6 +74,7 @@ async function setConditions(question, cookie, profile){
 
 function isExpired(question){
   try {
+    if(question.period_hours === -1) return false;
     const published_at = new Date(question.published_at.getTime());
     const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
     const current = Date.now();
