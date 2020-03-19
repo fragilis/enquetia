@@ -16,5 +16,5 @@ runtime: nodejs10
 instance_class: F2
 
 env_variables:
-  CLOUD_BUCKET: "enquetia"
-  TWITTER_CALLBACK: "https://enquetia.net/oauth/twitter/callback"
+  CLOUD_BUCKET: "enquetia-staging"
+  TWITTER_CALLBACK: "https://enquetia-staging.appspot.com/oauth/twitter/callback"
