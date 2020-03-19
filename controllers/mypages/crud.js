@@ -30,7 +30,7 @@ router.use((req, res, next) => {
  *
  * 作成したアンケートとお気に入りアンケートの一覧を表示
  */
-router.get('/', async (req, res, next) => {
+router.get('/', csrfProtection, async (req, res, next) => {
   try{
     const perPage = config.get('ENQUETES_PER_PAGE');
     const [enquetes, enquetesToken] = await models.questions.myQuestions(Number(req.user.id), perPage, req.query.enquetesToken);
@@ -54,6 +54,7 @@ router.get('/', async (req, res, next) => {
       favorites: favoritesWithConditions,
       enquetesToken: enquetesToken,
       favoritesToken: favoritesToken,
+      csrfToken: req.csrfToken(),
       maxItemCount: config.get('MAX_ITEM_COUNT'),
     });
   } catch (e) {

@@ -30,7 +30,7 @@ router.use((req, res, next) => {
  *
  * 人気のアンケートと最新アンケートを一覧表示
  */
-router.get('/', async (req, res, next) => {
+router.get('/', csrfProtection, async (req, res, next) => {
   try{
     const perPage = config.get('ENQUETES_PER_PAGE');
     const [topics, topicsToken] = await models.questions.popular(perPage);
@@ -60,6 +60,7 @@ router.get('/', async (req, res, next) => {
       topicsToken: topicsToken,
       newsToken: newsToken,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
+      csrfToken: req.csrfToken(),
     });
   } catch (e) {
     console.log(e);
@@ -202,7 +203,7 @@ router.post('/confirm', validation.checkQuestion, parseForm, csrfProtection,
  *
  * アンケート投票画面を表示
  */
-router.get('/:question_id', async (req, res, next) => {
+router.get('/:question_id', csrfProtection, async (req, res, next) => {
   try {
     const question = await models.questions.findById(parseInt(req.params.question_id));
     const questionWithConditions = await services.setConditions(question, req.cookies[req.params.question_id], req.user);
@@ -212,6 +213,7 @@ router.get('/:question_id', async (req, res, next) => {
       action: 'アンケート投票',
       question: questionWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
+      csrfToken: req.csrfToken(),
     });
   } catch (e) {
     console.log(e);
@@ -252,7 +254,7 @@ router.post('/:question_id', async (req, res, next) => {
  *
  * 投票結果を表示
  */
-router.get('/:question_id/result', async (req, res, next) => {
+router.get('/:question_id/result', csrfProtection, async (req, res, next) => {
   try {
     const question = await models.questions.findById(req.params.question_id);
     const  questionWithConditions = await services.setConditions(question, req.cookies[String(question.id)], req.user);
@@ -261,6 +263,7 @@ router.get('/:question_id/result', async (req, res, next) => {
       action: 'アンケート結果',
       question: questionWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
+      csrfToken: req.csrfToken(),
     });
   } catch (e) {
     console.log(e)

@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 const models = require('../../models/model-datastore');
 const config = require('../../config');
 const services = require('../../services/enquetes');
+const csurf = require('csurf');
+
+const csrfProtection = csurf({ cookie: true });
+const parseForm = bodyParser.urlencoded({ extended: false });
 
 const router = express.Router();
 
@@ -191,9 +195,9 @@ router.post('/getNextFavorites', async (req, res, next) => {
 /**
  * POST /api/voteTo
  *
- * アンケートをお気に入りに追加
+ * アンケートに投票
  */
-router.post('/voteTo', async (req, res, next) => {
+router.post('/voteTo', csrfProtection, async (req, res, next) => {
   try {
     if(req.body.question_id == null || req.body.answer == null) throw new Error('Bad request.');
     if(req.cookies[String(req.body.question_id)]) throw new Error('Have already voted to question: ', req.body.question_id);

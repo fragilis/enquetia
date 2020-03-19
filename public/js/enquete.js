@@ -34,6 +34,9 @@ function voteTo(question_id, answer_ids){
       'question_id': question_id,
       'answer': answer_ids,
     },
+    headers: {
+      'CSRF-Token': $('.card[name="' + question_id + '"]').find('input[name="_csrf"]').val(),
+    },
     dataType: 'html',
   }).done((data) => {
     const $enqueteUnit = $('.card[name="' + question_id + '"]').closest('.enqueteUnit');
