@@ -98,7 +98,7 @@ async function readOld(){
   try {
     const now = new Date();
     const q = await ds.createQuery(table)
-      .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-1, now.getHours(), now.getMinutes()))
+      .filter('created_at', '<', new Date(now.getFullYear(), now.getMonth(), now.getDate()-3, now.getHours(), now.getMinutes()))
     const [votes, info] = await ds.runQuery(q);
     return votes.map(commons.fromDatastore);
   } catch (e) {
