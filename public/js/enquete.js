@@ -24,6 +24,7 @@ function addValidationToForms(){
 
 
 function voteTo(question_id, answer_ids){
+  $('.card[name="' + question_id + '"]').find('button[type="submit"]').prop("disabled", true);
   const $navbar = $('.navbar');
   let dom = "";
   $.ajax({
