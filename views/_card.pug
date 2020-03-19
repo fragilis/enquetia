@@ -2,20 +2,23 @@ mixin card(question)
   form.needs-validation.vote(method="POST", action="/" + question.id, novalidate)
     .card.enquete.m-0.m-sm-4(name=question.id)
       input.form-control(type="hidden", name="_csrf", value=csrfToken)
-      .card-header.clearfix #{question.title}
-        a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
-          img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
-        if profile
-          if question.is_favorite
-            a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
-              img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-            a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-              img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
-          else
-            a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-              img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-            a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
-              img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+      .card-header.clearfix(style="background-color: ivory;")
+        .row
+          .col-8.col-sm-10.pr-0=question.title
+          .col-4.col-sm-2.pl-0
+            a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
+              img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
+            if profile
+              if question.is_favorite
+                a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
+                  img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+                a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                  img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+              else
+                a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                  img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+                a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
+                  img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
       .card-body.p-4
         unless question.description === undefined || question.description === ''
           p.card-text #{question.description}
@@ -81,20 +84,23 @@ mixin card(question)
 mixin editableCard(question)
   form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
     .card.enquete.m-0.m-sm-4(name=question.id)
-      .card-header.clearfix #{question.title}
-        a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
-          img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
-        if profile
-          if question.is_favorite
-            a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
-              img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-            a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-              img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
-          else
-            a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-              img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-            a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
-              img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+      .card-header.clearfix(style="background-color: ivory;")
+        .row
+          .col-8.col-sm-10.pr-0=question.title
+          .col-4.col-sm-2.pl-0
+            a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "&text=気になるアンケートを見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート"), target="_blank")
+              img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
+            if profile
+              if question.is_favorite
+                a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
+                  img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+                a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                  img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+              else
+                a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                  img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+                a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
+                  img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
       .card-body.p-4
         unless question.description === undefined || question.description === ''
           p.card-text #{question.description}
@@ -161,20 +167,23 @@ mixin editableCard(question)
 
 mixin result(question)
   .card.m-0.m-sm-4(name=question.id)
-    .card-header.clearfix #{question.title}
-      a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
-        img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
-      if profile
-        if question.is_favorite
-          a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
-            img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-          a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-            img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
-        else
-          a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-            img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-          a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
-            img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+    .card-header.clearfix(style="background-color: ivory;")
+      .row
+        .col-8.col-sm-10.pr-0=question.title
+        .col-4.col-sm-2.pl-0
+          a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
+            img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
+          if profile
+            if question.is_favorite
+              a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
+                img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+              a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+            else
+              a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+              a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
+                img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
     .card-body.p-4
       unless question.description === undefined || question.description === ''
         p.card-text #{question.description}
@@ -219,20 +228,23 @@ mixin result(question)
 
 mixin editableResult(question)
   .card.m-0.m-sm-4(name=question.id)
-    .card-header.clearfix #{question.title}
-      a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
-        img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
-      if profile
-        if question.is_favorite
-          a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
-            img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-          a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-            img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
-        else
-          a.float-right.mr-2.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
-            img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
-          a.float-right.mr-2.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
-            img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+    .card-header.clearfix(style="background-color: ivory;")
+      .row
+        .col-8.col-sm-10.pr-0=question.title
+        .col-4.col-sm-2.pl-0
+          a.float-right(href=encodeURI("http://twitter.com/share?url=https://enquetia.net/" + question.id + "/result&text=気になるアンケート結果を見つけました！「" + question.title + "」&hashtags=Enquetia,アンケティア,アンケート結果"), target="_blank")
+            img(src="/img/twitter_icon.png", width="25", height="25", alt="twitterに投稿", title="twitterに投稿")
+          if profile
+            if question.is_favorite
+              a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer;")
+                img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+              a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
+            else
+              a.float-right.mr-1.favoriteButton(onclick="removeFromFavorite(" + question.id + ")", style="cursor: pointer; display: none;")
+                img(src="/img/favorite.png", width="30", height="30", alt="お気に入りから削除", title="お気に入りから削除")
+              a.float-right.mr-1.favoriteButton(onclick="addToFavorite(" + question.id + ")", style="cursor: pointer;")
+                img(src="/img/unfavorite.png", width="30", height="30", alt="お気に入りに追加", title="お気に入りに追加")
     .card-body.p-4
       unless question.description === undefined || question.description === ''
         p.card-text #{question.description}

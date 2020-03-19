@@ -22,7 +22,10 @@ block content
           input.form-control(type="hidden", name="publish_status", id="publish_status", value=question.publish_status)
           input.form-control(type="hidden", name="_csrf", value=csrfToken)
           .card.m-0.m-sm-4.mb-5
-            .card-header.clearfix #{question.title}
+            .card-header.clearfix(style="background-color: ivory;")
+              .row
+                .col-8.col-sm-10.pr-0=question.title
+                .col-4.col-sm-2.pl-0
               input.form-control-plaintext(type="hidden", name="title", id="title", value=question.title)
             .card-body
               unless question.description === undefined || question.description === ''
