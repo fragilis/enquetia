@@ -94,21 +94,26 @@ router.get('/add', (req, res) => {
  * バリデーションチェックをして確認画面にリダイレクト
  */
 router.post('/add', validation.checkQuestion,
-  (req, res, next) => {
-    res.clearCookie('question');
+  async (req, res, next) => {
+    try {
+      res.clearCookie('question');
 
-    // validationエラーを処理
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      console.log(errors);
-      req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+      // validationエラーを処理
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        console.log(errors);
+        req.flash('error', 'アンケートが作成できませんでした。時間を空けて再度お試しください。');
+        res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
+        return res.redirect(`${req.baseUrl}/add`);
+      }
+
+      // 確認画面にリダイレクト
       res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
-      return res.redirect(`${req.baseUrl}/add`);
+      return res.redirect(`${req.baseUrl}/confirm`);
+    } catch (e) {
+      console.log(e);
+      next(e);
     }
-
-    // 確認画面にリダイレクト
-    res.cookie('question', req.body, {httpOnly: true, sameSite: 'Lax'});
-    return res.redirect(`${req.baseUrl}/confirm`);
   }
 );
 
