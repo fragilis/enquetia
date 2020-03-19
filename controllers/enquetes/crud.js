@@ -226,6 +226,7 @@ router.get('/:question_id', async (req, res, next) => {
  *
  * アンケートに投票
  */
+/*
 router.post('/:question_id', async (req, res, next) => {
   try {
     const vote = await services.setVoteValues(req.body);
@@ -242,8 +243,8 @@ router.post('/:question_id', async (req, res, next) => {
 
     return res.redirect(`${req.baseUrl}/${req.url}`);
   }
-
 });
+*/
 
 
 /**
