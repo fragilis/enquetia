@@ -1,5 +1,6 @@
 function createEnquete(dom){
-  $(dom).closest('form').prop('disabled', true);
+  $(dom).hide();
+  $(dom).closest('.col').find('button.dummy').show();
 
   let loadingAlert = '';
   loadingAlert += '<div class="alert alert-info alert-dismissible fade show mb-0">';

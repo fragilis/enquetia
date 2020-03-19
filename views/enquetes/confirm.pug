@@ -74,6 +74,7 @@ block content
             .col.clearfix
               button.btn.btn-danger.mt-2.ml-2.float-right(type="submit", name="modify") 修正する
               button.btn.btn-primary.mt-2.ml-2.float-right(type="submit", name="create", onclick="createEnquete(this)") 作成する
+              button.btn.btn-primary.mt-2.ml-2.float-right.dummy(type="button", disabled, style="display: none;") 作成する
 
 block script
   script(type='text/javascript', src='/js/confirm.js', id='question', data-json=JSON.stringify(question))
