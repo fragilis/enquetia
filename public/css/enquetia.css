@@ -24,3 +24,49 @@ main.container {
   background-color: dodgerblue;
   border-color: dodgerblue;
 }
+
+/* パソコン・スマホ共通のCSS */
+#pageTopBtn {
+    position: fixed; /*ボタンの配置場所を固定*/
+}
+#pageTopBtn a {
+    display: block; /*配置の調整*/
+    text-decoration: none; /*文字の下線を消す*/
+    color: #fff; /*文字の色*/
+    background: lightseagreen; /*ボタンの背景色*/
+    text-align: center; /*文字を中央に配置*/
+    border-radius: 5%; /*ボタンの角を少し丸くする*/
+    outline: none; /*クリックしたときの黒い枠を消す*/
+}
+#pageTopBtn a:hover {
+    text-decoration: none; 
+    background: #87cefa; /*マウスオーバー時の背景色*/
+}
+
+/* パソコンで表示する場合のCSS */
+@media (min-width: 768px) {
+#pageTopBtn {
+    bottom: 30px; /*下からのボタンの配置場所を指定*/
+    right: 50px; /*右からのボタンの配置場所を指定*/
+    font-size: 30px; /*文字のサイズ*/
+}
+#pageTopBtn a {
+    width: 60px; /*ボタンの幅*/
+    height: 45px; /*ボタンの高さ*/
+    padding: 0px 0; /*文字の配置場所の調整*/
+}
+}
+
+/* スマホで表示する場合のCSS */
+@media (max-width: 767px) {
+#pageTopBtn {
+    bottom: 10px; /*下からのボタンの配置場所を指定*/
+    right: 10px; /*右からのボタンの配置場所を指定*/
+    font-size: 20px;
+}
+#pageTopBtn a {
+    width: 48px;
+    height: 36px;
+    padding: 3px 0;
+}
+}
