@@ -204,8 +204,8 @@ async function myQuestions(user_id, limit, token){
 
 async function myFavorites(user_id, limit, token){
   try {
-    const myFavorites = await favorites.myFavorites(user_id);
-    const entities = await read(myFavorites.map(favorite => favorite.question_id));
+    const favs = await favorites.myFavorites(user_id);
+    const entities = await read(favs.map(fav => fav.question_id));
 
     const questions = [];
     for(let entity of entities.map(commons.fromDatastore)){
@@ -214,9 +214,9 @@ async function myFavorites(user_id, limit, token){
     }
     const startAt = token == null ? 0 : Number(token);
     const hasMore = questions.length > startAt + limit ? startAt + limit : false;
-    const favorites = questions.slice(startAt, startAt + limit);
+    const questions_sliced = questions.slice(startAt, startAt + limit);
 
-    return [favorites, hasMore];
+    return [questions_sliced, hasMore];
   }catch (e) {
     console.log(e);
     throw e;
