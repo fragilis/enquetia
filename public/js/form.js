@@ -31,7 +31,7 @@ function delete_item(num){
   $('#items').children('.input-group').each((i, elem) => {
     $(elem).find('.input-group-prepend span').text('選択肢' + (i+1));
     $(elem).children('input').attr('id', 'answer' + (i+1));
-    $(elem).children('input').attr('name', 'answer' + (i+1));
+    $(elem).children('input').attr('name', 'answers[]');
     $(elem).find('.input-group-append button').attr('onclick', 'delete_item(' + (i+1) + ')');
   })
 }
