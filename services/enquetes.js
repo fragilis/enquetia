@@ -72,9 +72,22 @@ async function setConditions(question, cookie, profile){
   }
 }
 
+function isExpired(question){
+  try {
+    const published_at = new Date(question.published_at.getTime());
+    const expired_at = published_at.setHours(published_at.getHours() + question.period_hours);
+    const current = Date.now();
+    return expired_at < current;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+}
+
 module.exports = {
   setEnqueteValues: setEnqueteValues,
   setVoteValues: setVoteValues,
   setConditions: setConditions,
+  isExpired: isExpired,
   images: images,
 };
