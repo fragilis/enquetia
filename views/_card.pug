@@ -180,7 +180,8 @@ mixin result(question)
       unless question.hashtags === undefined || question.hashtags === ''
         p.card-text
           a #test
-      canvas.mb-4.result(data-json=question)
+      .chart-container
+        canvas.mb-4.result(data-json=question)
 
       - var time_left = ""
       if question.is_expired
