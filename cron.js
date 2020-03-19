@@ -10,6 +10,7 @@ async function refreshVotes(){
 
     // votesの古いentityを取得
     const votes = await models.votes.readOld();
+    console.log("old: ", votes.map(vote => vote.id));
 
     const questions = [];
     const answers = [];
@@ -32,11 +33,14 @@ async function refreshVotes(){
 
     // questions.countの更新、answers.countの更新、votesの削除の3つを同じtransactionで行う
     for(let question of q_entities){
+      console.log("question.id: ", question.id);
+      const question_id = question.id;
       const transaction = await ds.transaction();
       await transaction.run();
 
       const key = await ds.key(['Questions', ds.int(question.id)]);
       question.count += questions.filter(q => q.id == question.id)[0].count;
+      console.log("saved question id: ", question.id);
       question.id = undefined;
 
       const entity = {
@@ -45,10 +49,11 @@ async function refreshVotes(){
       };
       await transaction.save(entity);
 
-      const my_a_entities = a_entities.filter(a => a.question_id == question.id);
+      const my_a_entities = a_entities.filter(a => a.question_id == question_id);
       for(let answer of my_a_entities){
         const key = ds.key(['Answers', ds.int(answer.id)]);
         answer.count += answers.filter(a => a.id == answer.id)[0].count;
+        console.log("saved answer id: ", answer.id);
         answer.id = undefined;
 
         const entity = {
@@ -59,11 +64,13 @@ async function refreshVotes(){
       }
 
       await transaction.commit();
-      await models.votes._delete(votes.filter(v => v.question_id == question.id).map(vote => vote.id));
-      console.log('refreshVotes() succeeded.');
-
-      return;
+      const vote_ids = votes.filter(v => v.question_id == question_id).map(vote => Number(vote.id));
+      console.log("votes to be deleted: ", vote_ids);
+      const [deleted_votes] = await models.votes._delete(vote_ids);
+      console.log(deleted_votes)
     }
+    console.log('refreshVotes() succeeded.');
+    return;
   } catch (e) {
     console.log(e);
     return;
