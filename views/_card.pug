@@ -69,11 +69,11 @@ mixin card(question)
           small.text-muted.mr-1 投票数：#{question.count}票
           small.text-muted.mr-1 #{publish_status} 
           if question.is_expired || question.is_voted
-            small.mr-1(style="color:red;") #{time_left}
+            small.mr-2(style="color:red;") #{time_left}
           else
-            small.text-muted.mr-1 #{time_left}
-          a.ml-2(href="javascript:void(0)", onclick="showResult(this)")
-            small 結果を表示する
+            small.text-muted.mr-2 #{time_left}
+          a(href="javascript:void(0)", onclick="showResult(this)")
+            small 結果を見る
           button.btn.btn-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled=question.is_expired || question.is_voted) 投票する
         .clearfix
           button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", disabled=question.is_expired || question.is_voted) 投票する
@@ -151,16 +151,15 @@ mixin editableCard(question)
           small.text-muted.mr-1 投票数：#{question.count}票
           small.text-muted.mr-1 #{publish_status} 
           if question.is_expired || question.is_voted
-            small.mr-1(style="color:red;") #{time_left}
+            small.mr-2(style="color:red;") #{time_left}
           else
-            small.text-muted.mr-1 #{time_left}
-          a.ml-2(hrefd="javascript:void(0)", onclick="showResult(this)")
-            small 結果を表示する
+            small.text-muted.mr-2 #{time_left}
+          a(hrefd="javascript:void(0)", onclick="showResult(this)")
+            small 結果を見る
           button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
           button.btn.btn-info.btn-sm.float-right.d-none.d-sm-block(type="submit", name="modify") 修正する
-        .clearfix
-          button.btn.btn-danger.btn-sm.float-right.d-block.d-sm-none.mt-2.ml-2(type="submit", name="delete") 削除する
-          button.btn.btn-info.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", name="modify") 修正する
+          button.btn.btn-danger.btn-sm.float-right.d-block.d-sm-none.mt-4.ml-2(type="submit", name="delete") 削除する
+          button.btn.btn-info.btn-sm.float-right.d-block.d-sm-none.mt-4(type="submit", name="modify") 修正する
 
 
 
@@ -217,13 +216,13 @@ mixin result(question)
 
       p.card-text.mb-0.clearfix
         small.text-muted.mr-1 投票数：#{question.count}票
-        small.text-muted.mr-1 #{publish_status} 
+        small.text-muted.mr-1 #{publish_status}
         if question.is_expired || question.is_voted
-          small.mr-1(style="color:red;") #{time_left}
+          small.mr-2(style="color:red;") #{time_left}
         else
-          small.text-muted.mr-1 #{time_left}
-        a.ml-2(href="javascript:void(0)", onclick="showVote(this)")
-          small 投票画面を表示する
+          small.text-muted.mr-2 #{time_left}
+        a(href="javascript:void(0)", onclick="showVote(this)")
+          small 投票画面へ
 
 
 mixin editableResult(question)
@@ -277,15 +276,17 @@ mixin editableResult(question)
 
       p.card-text.mb-0.clearfix
         small.text-muted.mr-1 投票数：#{question.count}票
-        small.text-muted.mr-1 #{publish_status} 
+        small.text-muted.mr-1 #{publish_status}
         if question.is_expired || question.is_voted
-          small.mr-1(style="color:red;") #{time_left}
+          small.mr-2(style="color:red;") #{time_left}
         else
-          small.text-muted.mr-1 #{time_left}
-        a.ml-2(href="javascript: void(0)", onclick="showVote(this)")
-          small 投票画面を表示する
+          small.text-muted.mr-2 #{time_left}
+        a(href="javascript: void(0)", onclick="showVote(this)")
+          small 投票画面へ
 
       form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
         button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
         button.btn.btn-info.btn-sm.float-right.d-none.d-sm-block(type="submit", name="modify") 修正する
+        button.btn.btn-danger.btn-sm.float-right.d-block.d-sm-none.mt-4.ml-2(type="submit", name="delete") 削除する
+        button.btn.btn-info.btn-sm.float-right.d-block.d-sm-none.mt-4(type="submit", name="modify") 修正する
 
