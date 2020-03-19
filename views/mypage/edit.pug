@@ -10,7 +10,7 @@ block head
   meta(property="og:image:alt", content="enquetia")
 
 block content
-  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3.border.rounded(role="main", style="min-height: 90vh;")
+  main.container.p-2.pt-4.pb-5.p-sm-5.mt-3.border.rounded(role="main")
     h3 #{action}
     form.needs-validation.mt-4(action=url+"/edit", method="POST", novalidate)
       input.form-control(type="hidden", name="_csrf", value=csrfToken)

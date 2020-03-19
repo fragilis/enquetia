@@ -1,5 +1,5 @@
 doctype html
-html.min-vh-100(lang="jp")
+html(lang="jp")
   head
     script(async, src="https://www.googletagmanager.com/gtag/js?id=UA-159933056-1")
     script.
@@ -25,43 +25,45 @@ html.min-vh-100(lang="jp")
     link(rel="icon", type="image/png", href="/img/favicon.png")
     script(data-ad-client="ca-pub-1361953622760947", async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
     block head
-  body.min-vh-100
-    nav.navbar.navbar-light.border-bottom.bg-light-custom
-      a.navbar-brand(href="/")
-        img.rounded.d-inline-block.align-top.mr-2(src="/img/logo.png", width="40", height="40")
-        | Enquetia
-      form.class-inline.d-none.d-sm-block
-        a.btn.btn-sm.btn-outline-primary(style="width:250px;", href="/add") アンケートを作る
-      span.navbar-text.navbar-right
-        if profile
-          a(href="/mypage" title="マイページに移動")
-            if profile.image
-              img.rounded-circle.mr-2(src=profile.image, width=40)
-            else
-              span #{profile.displayName} &nbsp;
-          a(href=logout) ログアウト
-        else
-          a(href=login) Twitterでログイン
-    if messages != null
-      if messages.info
-        .alert.alert-info.alert-dismissible.fade.show.mb-0
-          strong Info:
-          span.ml-2= messages.info
-          button.close(type="button", data-dismiss="alert", aria-label="Close")
-            span(aria-hidden="true") &times;
-      if messages.warn
-        .alert.alert-warning.alert-dismissible.fade.show.mb-0
-          strong Warning:
-          span.ml-2= messages.warn
-          button.close(type="button", data-dismiss="alert", aria-label="Close")
-            span(aria-hidden="true") &times;
-      if messages.error
-        .alert.alert-danger.alert-dismissible.fade.show.mb-0
-          strong Error:
-          span.ml-2= messages.error
-          button.close(type="button", data-dismiss="alert", aria-label="Close")
-            span(aria-hidden="true") &times;
-    block content
+  body
+    .fixed-top
+      nav.navbar.navbar-light.border-bottom.bg-light-custom
+        a.navbar-brand(href="/")
+          img.rounded.d-inline-block.align-top.mr-2(src="/img/logo.png", width="40", height="40")
+          | Enquetia
+        form.class-inline.d-none.d-sm-block
+          a.btn.btn-sm.btn-outline-primary(style="width:250px;", href="/add") アンケートを作る
+        span.navbar-text.navbar-right
+          if profile
+            a(href="/mypage" title="マイページに移動")
+              if profile.image
+                img.rounded-circle.mr-2(src=profile.image, width=40)
+              else
+                span #{profile.displayName} &nbsp;
+            a(href=logout) ログアウト
+          else
+            a(href=login) Twitterでログイン
+      if messages != null
+        if messages.info
+          .alert.alert-info.alert-dismissible.fade.show.mb-0
+            strong Info:
+            span.ml-2= messages.info
+            button.close(type="button", data-dismiss="alert", aria-label="Close")
+              span(aria-hidden="true") &times;
+        if messages.warn
+          .alert.alert-warning.alert-dismissible.fade.show.mb-0
+            strong Warning:
+            span.ml-2= messages.warn
+            button.close(type="button", data-dismiss="alert", aria-label="Close")
+              span(aria-hidden="true") &times;
+        if messages.error
+          .alert.alert-danger.alert-dismissible.fade.show.mb-0
+            strong Error:
+            span.ml-2= messages.error
+            button.close(type="button", data-dismiss="alert", aria-label="Close")
+              span(aria-hidden="true") &times;
+    .mt-5.pt-4
+      block content
     footer.container.mt-4(style="height:75px;")
       .row.d-flex.align-items-end.h-100.pb-4
         .col-12.text-center
