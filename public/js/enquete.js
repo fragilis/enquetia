@@ -37,6 +37,7 @@ function addValidationToForms(){
 
 
 function voteTo(question_id, answer_ids){
+  $('.loader').show();
   $('.card[name="' + question_id + '"]').find('button[type="submit"]').prop("disabled", true);
   const $navbar = $('.navbar');
   let dom = "";
@@ -76,12 +77,14 @@ function voteTo(question_id, answer_ids){
     dom += '</button>';
     dom += '</div>';
   }).always((data) => {
+    $('.loader').hide();
     $navbar.after(dom);
   });
 }
 
 
 function addToFavorite(question_id){
+  $('.loader').show();
   const $card = $('.card[name="' + question_id + '"]');
   const $navbar = $('.navbar');
   let dom = "";
@@ -113,12 +116,14 @@ function addToFavorite(question_id){
     dom += '</button>';
     dom += '</div>';
   }).always((data) => {
+    $('.loader').hide();
     $navbar.after(dom);
   });
 }
 
 
 function removeFromFavorite(question_id){
+  $('.loader').show();
   const $card = $('.card[name="' + question_id + '"]');
   const  $navbar = $('.navbar');
   let dom = "";
@@ -150,6 +155,7 @@ function removeFromFavorite(question_id){
     dom += '</button>';
     dom += '</div>';
   }).always((data) => {
+    $('.loader').hide();
     $navbar.after(dom);
   });
 }

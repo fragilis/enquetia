@@ -26,6 +26,8 @@ html(lang="jp")
     script(data-ad-client="ca-pub-1361953622760947", async, src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")
     block head
   body
+    .loader(style="display: none;")
+      span.spinner-border.spinner-border.spinner(role="status", aria-hidden="true")
     .fixed-top
       nav.navbar.navbar-light.border-bottom.bg-light-custom
         a.navbar-brand(href="/")
