@@ -118,9 +118,9 @@ mixin editableCard(question)
               each answer, index in question.answers
                 .form-check.mb-3.pl-5.col-xs-12.col-sm-6
                   if question.answer_type === "radio" && index === 0
-                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled=question.is_expired || question.is_voted)
+                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, required, disabled)
                   else
-                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled=question.is_expired || question.is_voted)
+                    input.form-check-input(id="answer"+index, name="answer", type=question.answer_type, value=answer.id, disabled)
                   label.form-check-label(for="answer"+index) #{answer.content}
                   if question.answers.length === index+1
                     .invalid-feedback どれか1つを選択してください。
