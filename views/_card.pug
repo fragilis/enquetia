@@ -221,8 +221,8 @@ mixin result(question)
           small.mr-2(style="color:red;") #{time_left}
         else
           small.text-muted.mr-2 #{time_left}
-        a(href="javascript:void(0)", onclick="showVote(this)")
-          small 投票画面へ
+          a(href="javascript:void(0)", onclick="showVote(this)")
+            small 投票画面へ
 
 
 mixin editableResult(question)
@@ -281,8 +281,8 @@ mixin editableResult(question)
           small.mr-2(style="color:red;") #{time_left}
         else
           small.text-muted.mr-2 #{time_left}
-        a(href="javascript: void(0)", onclick="showVote(this)")
-          small 投票画面へ
+          a(href="javascript: void(0)", onclick="showVote(this)")
+            small 投票画面へ
 
       form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
         button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
