@@ -49,6 +49,7 @@ function createChart(){
             }
           }],
           yAxes: [{
+            labels: window.innerWidth < 767 ? labels.map(label => label.length > 13 ? label.slice(0, 13) + "..." : label) : labels,
             ticks: {
               fontSize: window.innerWidth < 767 ? 9 : 12,
             },
