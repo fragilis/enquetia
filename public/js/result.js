@@ -18,6 +18,13 @@ function createChart(){
               borderWidth: 1
           }]
       },
+      options: {
+        plugins: {
+          colorschemes: {
+            scheme: 'brewer.Paired12',
+          },
+        },
+      },
       */
       type: 'horizontalBar',
       data: {
@@ -40,8 +47,13 @@ function createChart(){
               display: true,
               labelString: '（％）',
             }
-          }]
-        }
+          }],
+          yAxes: [{
+            ticks: {
+              fontSize: window.innerWidth < 767 ? 9 : 12,
+            },
+          }],
+        },
       }
     });
   });
