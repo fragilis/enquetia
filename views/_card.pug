@@ -76,9 +76,9 @@ mixin card(question)
                 small.text-muted.mr-2 #{time_left}
               br
               a(href="javascript:void(0)", onclick="showResult(this)")
-                small.mr-2 結果を見る
+                small.mr-3 結果を見る
               a(href="/" + question.id)
-                small アンケートのページに移動
+                small アンケートページに移動
               button.btn.btn-primary.btn-sm.float-right.d-none.d-sm-block(type="submit", disabled=question.is_expired || question.is_voted) 投票する
           .clearfix.col-4.col-sm-0.p-0.pr-sm-3.pl-sm-3
             button.btn.btn-primary.btn-sm.float-right.d-block.d-sm-none.mt-3(type="submit", disabled=question.is_expired || question.is_voted) 投票する
@@ -161,9 +161,9 @@ mixin editableCard(question)
             small.text-muted.mr-2 #{time_left}
           br
           a(hrefd="javascript:void(0)", onclick="showResult(this)")
-            small 結果を見る
+            small.mr-3 結果を見る
           a(href="/" + question.id)
-            small アンケートのページに移動
+            small アンケートページに移動
           button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
           button.btn.btn-info.btn-sm.float-right.d-none.d-sm-block(type="submit", name="modify") 修正する
           button.btn.btn-danger.btn-sm.float-right.d-block.d-sm-none.mt-4.ml-2(type="submit", name="delete") 削除する
@@ -226,14 +226,14 @@ mixin result(question)
         small.text-muted.mr-1 投票数：#{question.count}票
         small.text-muted.mr-1 #{publish_status}
         if question.is_expired || question.is_voted
-          small.mr-2(style="color:red;") #{time_left}
+          small.mr-3(style="color:red;") #{time_left}
         else
           small.text-muted.mr-2 #{time_left}
           br
           a(href="javascript:void(0)", onclick="showVote(this)")
-            small 投票画面へ
+            small.mr-3 投票画面へ
           a(href="/" + question.id)
-            small アンケートのページに移動
+            small アンケートページに移動
 
 
 
@@ -290,14 +290,14 @@ mixin editableResult(question)
         small.text-muted.mr-1 投票数：#{question.count}票
         small.text-muted.mr-1 #{publish_status}
         if question.is_expired || question.is_voted
-          small.mr-2(style="color:red;") #{time_left}
+          small.mr-3(style="color:red;") #{time_left}
         else
           small.text-muted.mr-2 #{time_left}
           a(href="javascript: void(0)", onclick="showVote(this)")
-            small 投票画面へ
+            small.,r-3 投票画面へ
         br
         a(href="/" + question.id)
-          small アンケートのページに移動
+          small アンケートページに移動
 
       form.needs-validation(method="POST", action="/mypage/" + question.id, novalidate)
         button.btn.btn-danger.btn-sm.float-right.d-none.d-sm-block.ml-2(type="submit", name="delete") 削除する
