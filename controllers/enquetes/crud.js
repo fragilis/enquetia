@@ -215,7 +215,7 @@ router.get('/:question_id', csrfProtection, async (req, res, next) => {
 
     res.render('enquetes/view.pug', {
       url: req.url,
-      action: 'アンケート投票',
+      action: 'アンケートページ',
       question: questionWithConditions,
       maxItemCount: config.get('MAX_ITEM_COUNT'),
       csrfToken: req.csrfToken(),
