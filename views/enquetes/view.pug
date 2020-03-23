@@ -3,12 +3,15 @@ include ../_card
 
 block head
   meta(name="description", content=question.description || "「" + question.title + "」の投票画面です。皆さんの投票をお待ちしています！")
-  meta(name="twitter:card", content="summary_large_image")
   meta(property="og:type", content="article")
   meta(property="og:title", content="「" + question.title + "」の投票はこちら")
   meta(property="og:description", content="皆さんの投票をお待ちしています！")
-  meta(property="og:image", content="https://storage.cloud.google.com/enquetia/" + question.id + ".png")
-  meta(property="og:image:alt", content="enquetia")
+  //- meta(property="og:image", content="https://enquetia.net/img/logo.png")
+  meta(property="og:image", content="https://storage.googleapis.com/enquetia/" + question.id + ".png")
+  //- meta(property="og:image", content="https://enquetia.net/img/5738700218564608.png")
+  //- meta(property="og:image", content="https://storage.cloud.google.com/enquetia/5738700218564608.png")
+  meta(name="twitter:card", content="summary_large_image")
+  //- meta(name="twitter:card", content="summary")
 
 block content
   main.container.p-2.pt-4.pb-5.p-sm-5.mt-3.border.rounded(role="main")

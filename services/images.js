@@ -24,7 +24,7 @@ async function createTwitterCard(id){
     await page.goto('https://enquetia.net/' + question_id, {waitUntil: "domcontentloaded"});
   
     const rect = await page.evaluate(() => {
-      const rect = document.getElementsByClassName("enquete")[0].getBoundingClientRect();
+      const rect = document.getElementsByClassName("card-body")[0].getBoundingClientRect();
       return {
         x: rect.left,
         y: rect.top,
