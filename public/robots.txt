@@ -1,0 +1,5 @@
+user-agent: *
+disallow: /api
+disallow: /mypage
+sitemap: https://enquetia.net/sitemap.xml
+
