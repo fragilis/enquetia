@@ -16,13 +16,13 @@ block content
       .col.p-0.pl-sm-3.pr-sm-3
         ul.nav.nav-pills.nav-fill.mt-2.mt-sm-4.ml-sm-3.mr-sm-3.mb-2.border.rounded(style="background-color: white;")
           li.nav-item
-            a.nav-link.active#pills-topics-tab(data-toggle="pill", href="#pills-topics", role="tab", aria-controls="pills-topics", aria-selected="true", onclick="window.setTimeout(createChart, 200)") 今話題のアンケート
+            a.nav-link.active#pills-news-tab(data-toggle="pill", href="#pills-news", role="tab", aria-controls="pills-news", aria-selected="true", onclick="window.setTimeout(createChart, 200)") 最新アンケート
           li.nav-item
-            a.nav-link#pills-news-tab(data-toggle="pill", href="#pills-news", role="tab", aria-controls="pills-news", aria-selected="false", onclick="window.setTimeout(createChart, 200)") 最新アンケート
+            a.nav-link#pills-topics-tab(data-toggle="pill", href="#pills-topics", role="tab", aria-controls="pills-topics", aria-selected="false", onclick="window.setTimeout(createChart, 200)") 今話題のアンケート
 
   main.container.p-2.pt-4.pb-5.p-sm-5.mt-3.border.rounded(role="main")
     .tab-content#pills-tabContent
-      .tab-pane.fade.show.active#pills-topics(role="tabpanel", aria-labelledby="pills-topics-tab")
+      .tab-pane.fade#pills-topics(role="tabpanel", aria-labelledby="pills-topics-tab")
         .card.mb-4.bg-info-custom
           .card-header.bg-light-custom
             h3.mb-0 今話題のアンケート
@@ -53,7 +53,7 @@ block content
               .card-body
                 p.card-text.mb-0 アンケートはありません。
 
-      .tab-pane.fade#pills-news(role="tabpanel", aria-labelledby="pills-news-tab")
+      .tab-pane.fade.show.active#pills-news(role="tabpanel", aria-labelledby="pills-news-tab")
         .card.bg-info-custom
           .card-header.bg-light-custom
             h3.mb-0 最新アンケート
