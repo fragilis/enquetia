@@ -67,6 +67,7 @@ function voteTo(question_id, answer_ids){
     dom += '</button>';
     dom += '</div>';
   }).fail((data) => {
+    $('.card[name="' + question_id + '"]').find('button[type="submit"]').prop("disabled", false);
     dom += '<div class="alert alert-danger alert-dismissible fade show mb-0">';
     dom += '<strong>Error:</strong>';
     dom += '<span class="ml-2">'
